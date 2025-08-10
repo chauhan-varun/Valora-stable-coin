@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
   description: "Decentralized Stablecoin Application",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,11 +38,7 @@ export default function RootLayout({
           <main className="flex-1 container mx-auto py-6 px-4 animate-fadeIn">
             {children}
           </main>
-          <footer className="border-t border-border py-6 mt-auto">
-            <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-              <p className="animate-slideInUp">© {new Date().getFullYear()} Valora. All rights reserved.</p>
-            </div>
-          </footer>
+          <Footer />
         </Providers>
       </body>
     </html>
