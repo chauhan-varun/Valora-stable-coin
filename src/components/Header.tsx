@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   return (
@@ -14,10 +15,13 @@ export default function Header() {
             <Link href="/mint" className="hover:text-foreground/80">Deposit & Mint</Link>
             <Link href="/redeem" className="hover:text-foreground/80">Redeem & Burn</Link>
             <Link href="/liquidate" className="hover:text-foreground/80">Liquidations</Link>
-            <Link href="/history" className="hover:text-foreground/80">History</Link>
+            <Link href="/About" className="hover:text-foreground/80">About</Link>
           </nav>
         </div>
-        <ConnectButton />
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <ConnectButton />
+        </div>
       </div>
     </header>
   )
