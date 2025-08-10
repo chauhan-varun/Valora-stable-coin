@@ -7,7 +7,6 @@ import { parseUnits } from 'viem'
 import HealthFactorGauge from '@/components/HealthFactorGauge'
 import { useHealthFactor } from '@/hooks/useHealthFactor'
 import { abis, addresses } from '@/lib/contracts'
-import Header from '@/components/Header'
 
 // Token addresses on Sepolia
 const tokenAddresses = {
@@ -282,7 +281,6 @@ export default function RedeemPage() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Redeem & Burn</h1>
         

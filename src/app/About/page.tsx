@@ -2,7 +2,6 @@
 
 import { useAccount } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import Header from '@/components/Header'
 
 export default function HistoryPage() {
   const { isConnected } = useAccount()
@@ -29,7 +28,6 @@ export default function HistoryPage() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Transaction History</h1>
 

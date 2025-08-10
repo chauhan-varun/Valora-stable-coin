@@ -118,8 +118,17 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(circle at 50% 50%, var(--background) 0%, color-mix(in oklch, var(--background), var(--primary) 10%) 100%);
     background-attachment: fixed;
+  }
+  
+  body:not(.dark) {
+    background-image: radial-gradient(circle at 50% 50%, var(--background) 0%, color-mix(in oklch, var(--background), var(--accent) 5%) 100%);
+    background-size: 100% 100%;
+  }
+  
+  body.dark {
+    background-image: radial-gradient(circle at 50% 50%, var(--background) 0%, color-mix(in oklch, var(--background), var(--primary) 10%) 100%);
+    background-size: 100% 100%;
   }
 }
 
@@ -142,6 +151,11 @@
 @keyframes slideInUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
@@ -193,6 +207,10 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-tabChange {
+  animation: tabFadeIn 0.3s ease-out forwards;
 }
 
 .animate-spin-slow {

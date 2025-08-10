@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useReadContract } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { parseUnits, formatUnits } from 'viem'
-import Header from '@/components/Header'
 import AccountInfo from '@/components/AccountInfo'
 import { abis, addresses } from '@/lib/contracts'
 
@@ -251,7 +250,6 @@ export default function LiquidatePage() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Liquidations</h1>
         
