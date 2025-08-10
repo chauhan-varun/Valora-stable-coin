@@ -25,6 +25,7 @@ export default function LiquidatePage() {
   const [isApproved, setIsApproved] = useState(false)
   
   const [userHealthFactor, setUserHealthFactor] = useState<bigint | null>(null)
+  const [minHealthFactor, setMinHealthFactor] = useState<bigint | null>(null)
   const [isLoadingHF, setIsLoadingHF] = useState(false)
   const [collateralReceived, setCollateralReceived] = useState('0')
   const [bonusAmount, setBonusAmount] = useState('0')
@@ -40,6 +41,23 @@ export default function LiquidatePage() {
       enabled: false // We'll call this manually when needed
     }
   })
+  
+  // Min health factor read contract
+  const { data: minHealthFactorData, refetch: refetchMinHealthFactor } = useReadContract({
+    address: addresses.dscEngine,
+    abi: abis.dscEngine,
+    functionName: 'getMinHealthFactor',
+    query: { 
+      enabled: true // We can fetch this on component load
+    }
+  })
+  
+  // Get min health factor on component load
+  useEffect(() => {
+    if (minHealthFactorData) {
+      setMinHealthFactor(minHealthFactorData as bigint)
+    }
+  }, [minHealthFactorData])
 
   // Helper to show status messages
   const showStatus = (message: string) => {
@@ -96,10 +114,14 @@ export default function LiquidatePage() {
         // Health factor is stored with 18 decimals
         const hfValue = Number(formatUnits(healthFactor, 18))
         
-        if (hfValue < 1.0) {
-          showStatus(`Position can be liquidated! Health factor: ${hfValue.toFixed(2)}`)
+        // Get min health factor (also with 18 decimals)
+        const minHfValue = minHealthFactor ? Number(formatUnits(minHealthFactor, 18)) : 1.0
+        
+        // Check if position is liquidatable: health factor < min health factor
+        if (hfValue < minHfValue) {
+          showStatus(`Position can be liquidated! Health factor: ${hfValue.toFixed(2)} (Min: ${minHfValue.toFixed(2)})`)
         } else {
-          showStatus(`Position is healthy (HF: ${hfValue.toFixed(2)}). Can't liquidate.`)
+          showStatus(`Position is healthy (HF: ${hfValue.toFixed(2)}, Min: ${minHfValue.toFixed(2)}). Can't liquidate.`)
         }
       } else {
         showStatus('No position found for this address')
@@ -121,9 +143,10 @@ export default function LiquidatePage() {
       return
     }
     
-    // Check if position is liquidatable (health factor < 1.0)
-    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= 1.0) {
-      showStatus('This position is not liquidatable (health factor ≥ 1.0)')
+    // Check if position is liquidatable (health factor < minHealthFactor)
+    const minHfValue = minHealthFactor ? Number(formatUnits(minHealthFactor, 18)) : 1.0
+    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= minHfValue) {
+      showStatus(`This position is not liquidatable (health factor ≥ ${minHfValue.toFixed(2)})`)
       return
     }
     
@@ -181,9 +204,10 @@ export default function LiquidatePage() {
       return
     }
     
-    // Check if position is liquidatable (health factor < 1.0)
-    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= 1.0) {
-      showStatus('This position is not liquidatable (health factor ≥ 1.0)')
+    // Check if position is liquidatable (health factor < minHealthFactor)
+    const minHfValue = minHealthFactor ? Number(formatUnits(minHealthFactor, 18)) : 1.0
+    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= minHfValue) {
+      showStatus(`This position is not liquidatable (health factor ≥ ${minHfValue.toFixed(2)})`)
       return
     }
     
@@ -333,13 +357,15 @@ export default function LiquidatePage() {
               <div className="flex flex-col gap-2">
                 <button 
                   className={`w-full py-2 rounded ${
-                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0
+                    !userHealthFactor || !minHealthFactor || 
+                    Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= Number(formatUnits(minHealthFactor, 18))
                       ? 'bg-muted text-muted-foreground'
                       : 'bg-primary text-primary-foreground'
                   }`}
                   onClick={handleApprove}
                   disabled={isPending || isApproving || isApproved || 
-                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
+                    !userHealthFactor || !minHealthFactor ||
+                    Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= Number(formatUnits(minHealthFactor, 18))}
                 >
                   {isApproving 
                     ? 'Approving...' 
@@ -347,21 +373,25 @@ export default function LiquidatePage() {
                       ? 'Approved ✓' 
                       : !userHealthFactor 
                         ? 'Search for a user first'
-                        : Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0
-                          ? 'Position is healthy (cannot liquidate)'
-                          : 'Step 1: Approve DSC'
+                        : !minHealthFactor
+                          ? 'Loading min health factor...'
+                          : Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= Number(formatUnits(minHealthFactor, 18))
+                            ? 'Position is healthy (cannot liquidate)'
+                            : 'Step 1: Approve DSC'
                   }
                 </button>
                 
                 <button 
                   className={`w-full py-2 rounded ${
-                    isApproved && userHealthFactor && Number(formatUnits(userHealthFactor || BigInt(0), 18)) < 1.0
+                    isApproved && userHealthFactor && minHealthFactor && 
+                    Number(formatUnits(userHealthFactor || BigInt(0), 18)) < Number(formatUnits(minHealthFactor, 18))
                       ? 'bg-primary text-primary-foreground' 
                       : 'bg-muted text-muted-foreground'
                   }`}
                   onClick={handleLiquidate}
                   disabled={isPending || !isApproved || 
-                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
+                    !userHealthFactor || !minHealthFactor ||
+                    Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= Number(formatUnits(minHealthFactor, 18))}
                 >
                   {isPending 
                     ? 'Processing...' 
