@@ -343,6 +343,53 @@ body:not(.dark) footer {
   border-top-color: rgba(0, 0, 0, 0.04);
 }
 
+/* Dark mode card styling */
+body.dark .bg-card\/50,
+body.dark .hover-card {
+  background: rgba(23, 23, 23, 0.7); /* Match the updated --card color */
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+body.dark .hover-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: rgba(23, 23, 23, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .hover-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  opacity: 0.8;
+}
+
+body.dark .hover-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Dark mode header improvements */
+body.dark .sticky.backdrop-blur-md.bg-background\/80 {
+  background-color: rgba(18, 18, 18, 0.8); /* Match the updated --background color */
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode footer improvements */
+body.dark footer {
+  background-color: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(10px);
+  border-top-color: rgba(255, 255, 255, 0.05);
+}
+
 /* Gradient text effect */
 .gradient-text {
   background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
@@ -350,6 +397,70 @@ body:not(.dark) footer {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
+}
+
+/* Dark mode specific UI improvements */
+body.dark .bg-primary {
+  background: linear-gradient(135deg, var(--primary), color-mix(in oklch, var(--primary), var(--accent) 40%));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.dark .bg-secondary {
+  background-color: rgba(34, 34, 34, 0.8); /* Match the updated --secondary color */
+}
+
+body.dark .bg-secondary\/50 {
+  background-color: rgba(34, 34, 34, 0.5);
+}
+
+body.dark .bg-muted {
+  background-color: rgba(34, 34, 34, 0.8);
+}
+
+body.dark .bg-muted\/50 {
+  background-color: rgba(34, 34, 34, 0.5);
+}
+
+body.dark .bg-card\/30 {
+  background-color: rgba(23, 23, 23, 0.3);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Improve button hover states in dark mode */
+body.dark button:not([disabled]):hover.bg-primary {
+  filter: brightness(1.1);
+}
+
+body.dark button:not([disabled]):active.bg-primary {
+  filter: brightness(0.9);
+}
+
+/* Dark mode position health card special styling - this is the gray card from the screenshot */
+body.dark .position-health-card {
+  background: rgba(30, 30, 35, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode specific class for the Liquidation section cards */
+body.dark .dark-card {
+  background: #181820;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark .dark-preview-card {
+  background: #2a2a32;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Dark mode gauge improvements */
+body.dark .bg-secondary\/30 {
+  background-color: rgba(30, 30, 35, 0.7);
+}
+
+body.dark .bg-white\/20 {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
 }
 
 body:not(.dark) .gradient-text {

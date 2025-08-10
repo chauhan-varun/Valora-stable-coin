@@ -8,6 +8,7 @@ import HealthFactorGauge from '@/components/HealthFactorGauge'
 import { useHealthFactor } from '@/hooks/useHealthFactor'
 import { abis, addresses } from '@/lib/contracts'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/components/ThemeProvider'
 
   // Token addresses on Sepolia
 const tokenAddresses = {
@@ -19,6 +20,7 @@ export default function MintPage() {
   const { address, isConnected } = useAccount()
   const { healthFactor, isLoading: isLoadingHF, refetch: refetchHF } = useHealthFactor()
   const { writeContract, isPending } = useWriteContract()
+    const { theme } = useTheme()
   
   // Token and amount states
   const [selectedToken, setSelectedToken] = useState<'WETH' | 'WBTC'>('WETH')
@@ -563,11 +565,10 @@ export default function MintPage() {
         
         <div className="mt-8">
           <h2 className="text-xl font-medium mb-4">Health Factor Preview</h2>
-          <div className="bg-card rounded-lg p-6 shadow">
+          <div className={`${theme === 'dark' ? 'dark-card' : 'bg-card rounded-lg'} p-6 shadow`}>
             <HealthFactorGauge healthFactor={healthFactor} isLoading={isLoadingHF} />
             <p className="mt-4 text-sm text-muted-foreground">
-              Your health factor represents the safety of your position. 
-              A health factor below 1.0 puts your position at risk of liquidation.
+              Your health factor represents the safety of your position. A health factor below 1.0 puts your position at risk of liquidation.
             </p>
           </div>
         </div>

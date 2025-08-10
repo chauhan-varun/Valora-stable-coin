@@ -7,6 +7,7 @@ import { parseUnits, formatUnits } from 'viem'
 import AccountInfo from '@/components/AccountInfo'
 import { abis, addresses } from '@/lib/contracts'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/components/ThemeProvider'
 
 // Token addresses on Sepolia
 const tokenAddresses = {
@@ -17,6 +18,7 @@ const tokenAddresses = {
 export default function LiquidatePage() {
   const { address, isConnected } = useAccount()
   const { writeContract, isPending } = useWriteContract()
+  const { theme } = useTheme()
   
   const [userAddress, setUserAddress] = useState('')
   const [selectedToken, setSelectedToken] = useState<'WETH' | 'WBTC'>('WETH')
@@ -268,7 +270,7 @@ export default function LiquidatePage() {
           </div>
         ) : (
           <>
-            <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-border/50 hover-card transition-all mb-8 animate-slideInUp">
+            <div className={`${theme === 'dark' ? 'dark-card' : 'bg-card/50 backdrop-blur-sm'} rounded-lg p-6 shadow mb-8`}>
               <h2 className="text-xl font-medium mb-4">Find Liquidatable Positions</h2>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">User Address</label>
@@ -300,7 +302,7 @@ export default function LiquidatePage() {
               </div>
             )}
 
-            <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-border/50 hover-card transition-all animate-slideInUp" style={{animationDelay: '0.2s'}}>
+            <div className={`${theme === 'dark' ? 'dark-card' : 'bg-card/50 backdrop-blur-sm'} rounded-lg p-6 shadow`}>
               <h2 className="text-xl font-medium mb-4">Liquidate Position</h2>
               
               <div className="mb-4">
@@ -340,7 +342,7 @@ export default function LiquidatePage() {
                 </div>
               </div>
               
-              <div className="mb-6 bg-card/30 backdrop-blur-sm p-4 rounded-lg border border-border/30 animate-fadeIn" style={{animationDelay: '0.3s'}}>
+              <div className={`mb-6 ${theme === 'dark' ? 'dark-preview-card' : 'bg-card/30 backdrop-blur-sm'} p-4 rounded-lg border border-border/30 animate-fadeIn`} style={{animationDelay: '0.3s'}}>
                 <h3 className="text-md font-medium mb-2">Liquidation Preview</h3>
                 <div className="flex justify-between mb-2">
                   <span>Debt to cover:</span>

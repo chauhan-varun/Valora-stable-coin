@@ -117,7 +117,7 @@ export default function AccountInfo({ userAddress }: AccountInfoProps) {
   }
   
   return (
-    <div className="bg-card rounded-lg p-6 shadow">
+    <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-border/50 position-health-card">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-medium">Account Information</h2>
         <div className="flex gap-2">
