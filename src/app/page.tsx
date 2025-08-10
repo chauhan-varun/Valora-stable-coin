@@ -2,12 +2,25 @@
 
 import { useAccount } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useHealthFactor } from '@/hooks/useHealthFactor'
+import { formatUnits } from 'viem'
+import { useHealthFactor, useCollateralValue, useDscMinted } from '@/hooks'
+import HealthFactorGauge from '@/components/HealthFactorGauge'
 import Header from '@/components/Header'
 
 export default function Home() {
   const { isConnected } = useAccount()
-  const { healthFactor, isLoading } = useHealthFactor()
+  const { healthFactor, isLoading: isLoadingHF } = useHealthFactor()
+  const { collateralValue, isLoading: isLoadingCollateral } = useCollateralValue()
+  const { dscMinted, isLoading: isLoadingDsc } = useDscMinted()
+  
+  // Format values for display
+  const formattedCollateral = collateralValue 
+    ? `$${(Number(formatUnits(collateralValue, 18))).toFixed(2)}`
+    : '$0.00'
+    
+  const formattedDscMinted = dscMinted
+    ? `${(Number(formatUnits(dscMinted, 18))).toFixed(2)} DSC`
+    : '0 DSC'
 
   return (
     <>
@@ -28,23 +41,25 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-card rounded-lg p-6 shadow">
             <h2 className="text-xl font-medium mb-2">Health Factor</h2>
-            {isLoading ? (
-              <div className="animate-pulse bg-muted h-8 rounded w-3/4"></div>
-            ) : (
-              <div className="text-2xl font-bold">
-                {healthFactor ? Number(healthFactor) / 1e18 : 'N/A'}
-              </div>
-            )}
+            <HealthFactorGauge healthFactor={healthFactor} isLoading={isLoadingHF} />
           </div>
           
           <div className="bg-card rounded-lg p-6 shadow">
             <h2 className="text-xl font-medium mb-2">Total Collateral (USD)</h2>
-            <div className="text-2xl font-bold">$0.00</div>
+            {isLoadingCollateral ? (
+              <div className="animate-pulse bg-muted h-8 rounded w-3/4"></div>
+            ) : (
+              <div className="text-2xl font-bold">{formattedCollateral}</div>
+            )}
           </div>
           
           <div className="bg-card rounded-lg p-6 shadow">
             <h2 className="text-xl font-medium mb-2">DSC Debt</h2>
-            <div className="text-2xl font-bold">0 DSC</div>
+            {isLoadingDsc ? (
+              <div className="animate-pulse bg-muted h-8 rounded w-3/4"></div>
+            ) : (
+              <div className="text-2xl font-bold">{formattedDscMinted}</div>
+            )}
           </div>
           
           <div className="bg-card rounded-lg p-6 shadow">
