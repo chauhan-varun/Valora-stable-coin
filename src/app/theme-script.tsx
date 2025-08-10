@@ -11,6 +11,20 @@ export function ThemeScript() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    // Listen for storage events to handle theme changes across tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'dsc-theme') {
+        if (e.newValue === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   return null;

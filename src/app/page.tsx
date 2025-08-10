@@ -8,6 +8,7 @@ import HealthFactorGauge from '@/components/HealthFactorGauge'
 import AccountInfo from '@/components/AccountInfo'
 import Image from 'next/image'
 import { useTheme } from '@/components/ThemeProvider'
+import Link from 'next/link'
 
 export default function Home() {
   const { isConnected } = useAccount()
@@ -67,7 +68,7 @@ export default function Home() {
         <div className="mt-10 animate-slideInUp" style={{animationDelay: '0.3s'}}>
           <h2 className="text-xl text-blue-400 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="/mint" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            <Link href="/mint" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'} block`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -78,8 +79,8 @@ export default function Home() {
               </div>
               <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">Deposit & Mint</h3>
               <p className="text-sm text-muted-foreground">Add collateral and mint DSC</p>
-            </a>
-            <a href="/redeem" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            </Link>
+            <Link href="/redeem" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'} block`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -96,8 +97,8 @@ export default function Home() {
               </div>
               <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">Redeem & Burn</h3>
               <p className="text-sm text-muted-foreground">Burn DSC and withdraw collateral</p>
-            </a>
-            <a href="/liquidate" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            </Link>
+            <Link href="/liquidate" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'} block`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -109,7 +110,7 @@ export default function Home() {
               </div>
               <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">Liquidations</h3>
               <p className="text-sm text-muted-foreground">Liquidate unhealthy positions</p>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

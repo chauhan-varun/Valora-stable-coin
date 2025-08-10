@@ -56,6 +56,11 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
+    
+    // Force a repaint to ensure the theme is applied immediately
+    document.body.style.display = 'none'
+    document.body.offsetHeight // Trigger a reflow
+    document.body.style.display = ''
   }, [theme, mounted])
 
   const value = {
