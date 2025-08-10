@@ -21,6 +21,8 @@ export default function LiquidatePage() {
   const [selectedToken, setSelectedToken] = useState<'WETH' | 'WBTC'>('WETH')
   const [debtToCover, setDebtToCover] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
+  const [isApproving, setIsApproving] = useState(false)
+  const [isApproved, setIsApproved] = useState(false)
   
   const [userHealthFactor, setUserHealthFactor] = useState<bigint | null>(null)
   const [isLoadingHF, setIsLoadingHF] = useState(false)
@@ -112,7 +114,8 @@ export default function LiquidatePage() {
     }
   }
   
-  const handleLiquidate = async () => {
+  // Step 1: Handle DSC approval for liquidation
+  const handleApprove = async () => {
     if (!isConnected || !address || !userAddress || !debtToCover || parseFloat(debtToCover) <= 0) {
       showStatus('Please connect wallet and enter valid values')
       return
@@ -125,10 +128,82 @@ export default function LiquidatePage() {
     }
     
     try {
+      setIsApproving(true)
+      showStatus('Approving DSC tokens...')
+      
+      // Get debt amount in wei based on user input
+      let debtInWei: bigint;
+      try {
+        // Try to parse the input directly as a bigint (wei)
+        debtInWei = BigInt(debtToCover)
+      } catch {
+        // If that fails, treat it as DSC and convert to wei (DSC has 18 decimals)
+        debtInWei = parseUnits(debtToCover, 18)
+      }
+      
+      // Call approve() directly on the DSC token contract
+      // Following the pattern: dsc.approve(address(dscEngine), debtToCover);
+      await writeContract({
+        address: addresses.dscToken, // DSC token address
+        // Basic ERC20 approve function ABI
+        abi: [
+          {
+            inputs: [
+              { name: "spender", type: "address" },
+              { name: "amount", type: "uint256" }
+            ],
+            name: "approve",
+            outputs: [{ name: "", type: "bool" }],
+            stateMutability: "nonpayable",
+            type: "function"
+          }
+        ],
+        functionName: 'approve',
+        // Parameters: dscEngine contract address, amount to approve
+        args: [addresses.dscEngine, debtInWei],
+      })
+      
+      showStatus('DSC tokens approved! You can now liquidate.')
+      setIsApproved(true)
+    } catch (error) {
+      console.error('Error approving DSC tokens:', error)
+      showStatus('Error: ' + (error instanceof Error ? error.message : 'Approval failed'))
+      setIsApproved(false)
+    } finally {
+      setIsApproving(false)
+    }
+  }
+
+  // Step 2: Handle liquidation after approval
+  const handleLiquidate = async () => {
+    if (!isConnected || !address || !userAddress || !debtToCover || parseFloat(debtToCover) <= 0) {
+      showStatus('Please connect wallet and enter valid values')
+      return
+    }
+    
+    // Check if position is liquidatable (health factor < 1.0)
+    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= 1.0) {
+      showStatus('This position is not liquidatable (health factor ≥ 1.0)')
+      return
+    }
+    
+    if (!isApproved) {
+      showStatus('Please approve DSC tokens first')
+      return
+    }
+    
+    try {
       showStatus('Liquidating position...')
       
-      // Convert debt to cover to wei
-      const debtInWei = parseUnits(debtToCover, 18) // DSC has 18 decimals
+      // Get debt amount in wei based on user input
+      let debtInWei: bigint;
+      try {
+        // Try to parse the input directly as a bigint (wei)
+        debtInWei = BigInt(debtToCover)
+      } catch {
+        // If that fails, treat it as DSC and convert to wei (DSC has 18 decimals)
+        debtInWei = parseUnits(debtToCover, 18)
+      }
       
       await writeContract({
         address: addresses.dscEngine,
@@ -139,6 +214,7 @@ export default function LiquidatePage() {
       
       showStatus('Liquidation successful!')
       setDebtToCover('')
+      setIsApproved(false)
       
       // Refresh health factor
       handleSearch()
@@ -217,13 +293,21 @@ export default function LiquidatePage() {
               
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">Debt To Cover (DSC)</label>
-                <input 
-                  type="text" 
-                  className="w-full rounded border px-4 py-2"
-                  value={debtToCover}
-                  onChange={(e) => setDebtToCover(e.target.value)}
-                  placeholder="0.0"
-                />
+                <div className="flex flex-col">
+                  <input 
+                    type="text" 
+                    className="w-full rounded border px-4 py-2"
+                    value={debtToCover}
+                    onChange={(e) => {
+                      setDebtToCover(e.target.value)
+                      setIsApproved(false) // Reset approval when debt amount changes
+                    }}
+                    placeholder="0.0"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Enter value in wei (e.g. 1000000000000000000 for 1 DSC) or as decimal DSC units
+                  </p>
+                </div>
               </div>
               
               <div className="mb-6 bg-muted/50 p-4 rounded">
@@ -246,13 +330,25 @@ export default function LiquidatePage() {
                 </div>
               </div>
               
-              <button 
-                className="bg-primary text-primary-foreground w-full py-2 rounded"
-                onClick={handleLiquidate}
-                disabled={isPending || !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
-              >
-                {isPending ? 'Processing...' : 'Liquidate Position'}
-              </button>
+              <div className="flex flex-col gap-2">
+                <button 
+                  className="bg-primary text-primary-foreground w-full py-2 rounded"
+                  onClick={handleApprove}
+                  disabled={isPending || isApproving || isApproved || 
+                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
+                >
+                  {isApproving ? 'Approving...' : isApproved ? 'Approved ✓' : 'Step 1: Approve DSC'}
+                </button>
+                
+                <button 
+                  className={`w-full py-2 rounded ${isApproved ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
+                  onClick={handleLiquidate}
+                  disabled={isPending || !isApproved || 
+                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
+                >
+                  {isPending ? 'Processing...' : 'Step 2: Liquidate Position'}
+                </button>
+              </div>
             </div>
           </>
         )}
