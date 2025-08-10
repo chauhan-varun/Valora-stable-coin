@@ -6,6 +6,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { parseUnits, formatUnits } from 'viem'
 import AccountInfo from '@/components/AccountInfo'
 import { abis, addresses } from '@/lib/contracts'
+import { cn } from '@/lib/utils'
 
 // Token addresses on Sepolia
 const tokenAddresses = {
@@ -251,7 +252,7 @@ export default function LiquidatePage() {
   return (
     <>
       <div className="container mx-auto p-4 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">Liquidations</h1>
+        <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-fadeIn">Liquidations</h1>
         
         {statusMessage && (
           <div className="mb-4 p-4 rounded-md bg-primary/10 text-primary font-medium">
@@ -260,14 +261,14 @@ export default function LiquidatePage() {
         )}
 
         {!isConnected ? (
-          <div className="bg-muted rounded-lg p-8 text-center">
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8 text-center border border-border/50 shadow-lg animate-slideInUp hover-card">
             <h2 className="text-2xl font-bold mb-4">Connect Wallet</h2>
             <p className="mb-6">You need to connect your wallet to perform liquidations</p>
             <ConnectButton />
           </div>
         ) : (
           <>
-            <div className="bg-card rounded-lg p-6 shadow mb-8">
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-border/50 hover-card transition-all mb-8 animate-slideInUp">
               <h2 className="text-xl font-medium mb-4">Find Liquidatable Positions</h2>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">User Address</label>
@@ -299,20 +300,20 @@ export default function LiquidatePage() {
               </div>
             )}
 
-            <div className="bg-card rounded-lg p-6 shadow">
+            <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-border/50 hover-card transition-all animate-slideInUp" style={{animationDelay: '0.2s'}}>
               <h2 className="text-xl font-medium mb-4">Liquidate Position</h2>
               
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">Select Collateral</label>
                 <div className="flex gap-2">
                   <button 
-                    className={`px-4 py-2 rounded ${selectedToken === 'WETH' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+                    className={`px-4 py-2 rounded-md transition-all duration-300 ${selectedToken === 'WETH' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-secondary/50 hover:bg-secondary/70'}`}
                     onClick={() => setSelectedToken('WETH')}
                   >
                     WETH
                   </button>
                   <button 
-                    className={`px-4 py-2 rounded ${selectedToken === 'WBTC' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+                    className={`px-4 py-2 rounded-md transition-all duration-300 ${selectedToken === 'WBTC' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-secondary/50 hover:bg-secondary/70'}`}
                     onClick={() => setSelectedToken('WBTC')}
                   >
                     WBTC
@@ -339,7 +340,7 @@ export default function LiquidatePage() {
                 </div>
               </div>
               
-              <div className="mb-6 bg-muted/50 p-4 rounded">
+              <div className="mb-6 bg-card/30 backdrop-blur-sm p-4 rounded-lg border border-border/30 animate-fadeIn" style={{animationDelay: '0.3s'}}>
                 <h3 className="text-md font-medium mb-2">Liquidation Preview</h3>
                 <div className="flex justify-between mb-2">
                   <span>Debt to cover:</span>

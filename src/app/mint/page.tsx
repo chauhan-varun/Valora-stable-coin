@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { parseUnits } from 'viem'
 import HealthFactorGauge from '@/components/HealthFactorGauge'
 import { useHealthFactor } from '@/hooks/useHealthFactor'
 import { abis, addresses } from '@/lib/contracts'
+import { cn } from '@/lib/utils'
 
   // Token addresses on Sepolia
 const tokenAddresses = {
@@ -29,6 +30,22 @@ export default function MintPage() {
   
   // UI view modes: 'combined' (default), 'deposit', or 'mint'
   const [viewMode, setViewMode] = useState<'combined' | 'deposit' | 'mint'>('combined')
+  const [animateTab, setAnimateTab] = useState(false)
+  
+  // Handle tab change with animation
+  const changeTab = (tab: 'combined' | 'deposit' | 'mint') => {
+    if (tab === viewMode) return
+    setAnimateTab(false)
+    setTimeout(() => {
+      setViewMode(tab)
+      setAnimateTab(true)
+    }, 200)
+  }
+  
+  // Initialize animation on first render
+  useEffect(() => {
+    setAnimateTab(true)
+  }, [])
 
   // Helper to show status messages
   const showStatus = (message: string) => {
@@ -297,7 +314,7 @@ export default function MintPage() {
   return (
     <>
       <div className="container mx-auto p-4 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">Deposit & Mint</h1>
+        <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-fadeIn">Deposit & Mint</h1>
         
         {statusMessage && (
           <div className="mb-4 p-4 rounded-md bg-primary/10 text-primary font-medium">
@@ -309,26 +326,45 @@ export default function MintPage() {
         <div className="mb-6 border-b">
           <div className="flex gap-4">
             <button 
-              className={`px-4 py-2 -mb-px ${viewMode === 'combined' ? 'text-primary border-b-2 border-primary font-medium' : 'text-muted-foreground'}`}
-              onClick={() => setViewMode('combined')}
+              className={cn(
+                'px-4 py-2 -mb-px transition-all duration-300 relative',
+                viewMode === 'combined' ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => changeTab('combined')}
             >
               Combined
+              {viewMode === 'combined' && (
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary animate-scaleIn" />
+              )}
             </button>
             <button 
-              className={`px-4 py-2 -mb-px ${viewMode === 'deposit' ? 'text-primary border-b-2 border-primary font-medium' : 'text-muted-foreground'}`}
-              onClick={() => setViewMode('deposit')}
+              className={cn(
+                'px-4 py-2 -mb-px transition-all duration-300 relative',
+                viewMode === 'deposit' ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => changeTab('deposit')}
             >
               Deposit Only
+              {viewMode === 'deposit' && (
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary animate-scaleIn" />
+              )}
             </button>
             <button 
-              className={`px-4 py-2 -mb-px ${viewMode === 'mint' ? 'text-primary border-b-2 border-primary font-medium' : 'text-muted-foreground'}`}
-              onClick={() => setViewMode('mint')}
+              className={cn(
+                'px-4 py-2 -mb-px transition-all duration-300 relative',
+                viewMode === 'mint' ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => changeTab('mint')}
             >
               Mint Only
+              {viewMode === 'mint' && (
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary animate-scaleIn" />
+              )}
             </button>
           </div>
         </div>
         
+        <div className={cn('transition-opacity duration-200', animateTab ? 'opacity-100' : 'opacity-0')}>
         {!isConnected ? (
           <div className="bg-muted rounded-lg p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">Connect Wallet</h2>
@@ -534,6 +570,7 @@ export default function MintPage() {
               A health factor below 1.0 puts your position at risk of liquidation.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </>
