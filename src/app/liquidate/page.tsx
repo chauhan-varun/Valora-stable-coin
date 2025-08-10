@@ -332,21 +332,43 @@ export default function LiquidatePage() {
               
               <div className="flex flex-col gap-2">
                 <button 
-                  className="bg-primary text-primary-foreground w-full py-2 rounded"
+                  className={`w-full py-2 rounded ${
+                    !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0
+                      ? 'bg-muted text-muted-foreground'
+                      : 'bg-primary text-primary-foreground'
+                  }`}
                   onClick={handleApprove}
                   disabled={isPending || isApproving || isApproved || 
                     !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
                 >
-                  {isApproving ? 'Approving...' : isApproved ? 'Approved ✓' : 'Step 1: Approve DSC'}
+                  {isApproving 
+                    ? 'Approving...' 
+                    : isApproved 
+                      ? 'Approved ✓' 
+                      : !userHealthFactor 
+                        ? 'Search for a user first'
+                        : Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0
+                          ? 'Position is healthy (cannot liquidate)'
+                          : 'Step 1: Approve DSC'
+                  }
                 </button>
                 
                 <button 
-                  className={`w-full py-2 rounded ${isApproved ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
+                  className={`w-full py-2 rounded ${
+                    isApproved && userHealthFactor && Number(formatUnits(userHealthFactor || BigInt(0), 18)) < 1.0
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground'
+                  }`}
                   onClick={handleLiquidate}
                   disabled={isPending || !isApproved || 
                     !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
                 >
-                  {isPending ? 'Processing...' : 'Step 2: Liquidate Position'}
+                  {isPending 
+                    ? 'Processing...' 
+                    : !isApproved 
+                      ? 'Approval required first'
+                      : 'Step 2: Liquidate Position'
+                  }
                 </button>
               </div>
             </div>
