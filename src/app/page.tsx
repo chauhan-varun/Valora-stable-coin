@@ -5,6 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { formatUnits } from 'viem'
 import { useHealthFactor, useCollateralValue, useDscMinted } from '@/hooks'
 import HealthFactorGauge from '@/components/HealthFactorGauge'
+import AccountInfo from '@/components/AccountInfo'
 import Header from '@/components/Header'
 
 export default function Home() {
@@ -44,27 +45,8 @@ export default function Home() {
             <HealthFactorGauge healthFactor={healthFactor} isLoading={isLoadingHF} />
           </div>
           
-          <div className="bg-card rounded-lg p-6 shadow">
-            <h2 className="text-xl font-medium mb-2">Total Collateral (USD)</h2>
-            {isLoadingCollateral ? (
-              <div className="animate-pulse bg-muted h-8 rounded w-3/4"></div>
-            ) : (
-              <div className="text-2xl font-bold">{formattedCollateral}</div>
-            )}
-          </div>
-          
-          <div className="bg-card rounded-lg p-6 shadow">
-            <h2 className="text-xl font-medium mb-2">DSC Debt</h2>
-            {isLoadingDsc ? (
-              <div className="animate-pulse bg-muted h-8 rounded w-3/4"></div>
-            ) : (
-              <div className="text-2xl font-bold">{formattedDscMinted}</div>
-            )}
-          </div>
-          
-          <div className="bg-card rounded-lg p-6 shadow">
-            <h2 className="text-xl font-medium mb-2">Collateral Breakdown</h2>
-            <div className="text-md">No collateral deposited</div>
+          <div className="col-span-1 md:col-span-2">
+            <AccountInfo />
           </div>
         </div>
       )}

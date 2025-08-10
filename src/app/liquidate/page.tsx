@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useReadContract } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { parseUnits, formatUnits } from 'viem'
 import Header from '@/components/Header'
+import AccountInfo from '@/components/AccountInfo'
 import { abis, addresses } from '@/lib/contracts'
 
 // Token addresses on Sepolia
@@ -293,6 +294,12 @@ export default function LiquidatePage() {
                 </p>
               </div>
             </div>
+            
+            {userAddress && userAddress.startsWith('0x') && userAddress.length === 42 && (
+              <div className="mb-8">
+                <AccountInfo userAddress={userAddress as `0x${string}`} />
+              </div>
+            )}
 
             <div className="bg-card rounded-lg p-6 shadow">
               <h2 className="text-xl font-medium mb-4">Liquidate Position</h2>
