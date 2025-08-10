@@ -338,9 +338,8 @@ body:not(.dark) .border-b {
 
 /* Light mode footer improvements */
 body:not(.dark) footer {
-  background-color: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
-  border-top-color: rgba(0, 0, 0, 0.04);
+  background-color: rgba(133, 133, 141, 0.2);
+  border-top: none;
 }
 
 /* Dark mode card styling */
@@ -385,9 +384,8 @@ body.dark .sticky.backdrop-blur-md.bg-background\/80 {
 
 /* Dark mode footer improvements */
 body.dark footer {
-  background-color: rgba(18, 18, 18, 0.7);
-  backdrop-filter: blur(10px);
-  border-top-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(133, 133, 141, 0.2);
+  border-top: none;
 }
 
 /* Gradient text effect */
