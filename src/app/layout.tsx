@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { ThemeInitScript } from "./theme-script";
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -29,10 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeInitScript />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground min-h-screen flex flex-col`}
         style={{ minHeight: '100vh' }}
+        suppressHydrationWarning
       >
         <Providers>
           <Header />

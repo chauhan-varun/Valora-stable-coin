@@ -457,7 +457,7 @@ export default function RedeemPage() {
           </div>
         ) : viewMode === 'redeem' ? (
           // REDEEM ONLY VIEW
-          <div className="bg-card rounded-lg p-6 shadow max-w-md mx-auto">
+          <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg p-6 shadow-lg max-w-md mx-auto`}>
             <h2 className="text-xl font-medium mb-4">Redeem Collateral</h2>
             
             <div className="mb-4">
@@ -512,7 +512,7 @@ export default function RedeemPage() {
           </div>
         ) : (
           // BURN ONLY VIEW
-          <div className="bg-card rounded-lg p-6 shadow max-w-md mx-auto">
+          <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg p-6 shadow-lg max-w-md mx-auto`}>
             <h2 className="text-xl font-medium mb-4">Burn DSC</h2>
             
             <div className="mb-4">
