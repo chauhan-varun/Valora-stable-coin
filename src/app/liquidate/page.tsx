@@ -1,24 +1,151 @@
 'use client'
 
-import { useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useState, useEffect } from 'react'
+import { useAccount, useWriteContract, useReadContract } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { parseUnits, formatUnits } from 'viem'
 import Header from '@/components/Header'
+import { abis, addresses } from '@/lib/contracts'
+
+// Token addresses on Sepolia
+const tokenAddresses = {
+  WETH: '0xdd13E55209Fd76AfE204dBda4007C227904f0a81' as `0x${string}`, // Sepolia WETH
+  WBTC: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063' as `0x${string}`, // Sepolia WBTC
+}
 
 export default function LiquidatePage() {
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
+  const { writeContract, isPending } = useWriteContract()
+  
   const [userAddress, setUserAddress] = useState('')
   const [selectedToken, setSelectedToken] = useState<'WETH' | 'WBTC'>('WETH')
   const [debtToCover, setDebtToCover] = useState('')
+  const [statusMessage, setStatusMessage] = useState('')
   
+  const [userHealthFactor, setUserHealthFactor] = useState<bigint | null>(null)
+  const [isLoadingHF, setIsLoadingHF] = useState(false)
+  const [collateralReceived, setCollateralReceived] = useState('0')
+  const [bonusAmount, setBonusAmount] = useState('0')
+  const [totalReceived, setTotalReceived] = useState('0')
+
+  // Health factor read contract
+  const { data: healthFactorData, refetch: refetchHealthFactor } = useReadContract({
+    address: addresses.dscEngine,
+    abi: abis.dscEngine,
+    functionName: 'getHealthFactor',
+    args: userAddress ? [userAddress as `0x${string}`] : undefined,
+    query: { 
+      enabled: false // We'll call this manually when needed
+    }
+  })
+
+  // Helper to show status messages
+  const showStatus = (message: string) => {
+    setStatusMessage(message)
+    setTimeout(() => setStatusMessage(''), 5000)
+  }
+  
+  // Calculate liquidation preview
+  useEffect(() => {
+    if (!debtToCover || parseFloat(debtToCover) <= 0) {
+      setCollateralReceived('0')
+      setBonusAmount('0')
+      setTotalReceived('0')
+      return
+    }
+    
+    // This is a simplified calculation for UI purposes
+    // In a real implementation, we would use on-chain data for precision
+    const debtAmountInUSD = parseFloat(debtToCover)
+    
+    // Mock token prices (in a real app, get these from chainlink oracles via contract)
+    const tokenPriceUSD = selectedToken === 'WETH' ? 3500 : 65000
+    
+    // Calculate token amount from debt
+    const baseTokenAmount = debtAmountInUSD / tokenPriceUSD
+    
+    // Apply 10% bonus
+    const bonusTokenAmount = baseTokenAmount * 0.1
+    
+    // Total to receive
+    const totalTokenAmount = baseTokenAmount + bonusTokenAmount
+    
+    setCollateralReceived(baseTokenAmount.toFixed(6))
+    setBonusAmount(bonusTokenAmount.toFixed(6))
+    setTotalReceived(totalTokenAmount.toFixed(6))
+  }, [debtToCover, selectedToken])
+
   const handleSearch = async () => {
-    // Implementation will be added later
-    console.log('Searching for user', userAddress)
+    if (!userAddress || !userAddress.startsWith('0x') || userAddress.length !== 42) {
+      showStatus('Please enter a valid Ethereum address')
+      return
+    }
+    
+    try {
+      setIsLoadingHF(true)
+      showStatus('Checking health factor...')
+      
+      const result = await refetchHealthFactor()
+      const healthFactor = result.data as bigint | undefined
+      
+      if (healthFactor) {
+        setUserHealthFactor(healthFactor)
+        
+        // Health factor is stored with 18 decimals
+        const hfValue = Number(formatUnits(healthFactor, 18))
+        
+        if (hfValue < 1.0) {
+          showStatus(`Position can be liquidated! Health factor: ${hfValue.toFixed(2)}`)
+        } else {
+          showStatus(`Position is healthy (HF: ${hfValue.toFixed(2)}). Can't liquidate.`)
+        }
+      } else {
+        showStatus('No position found for this address')
+        setUserHealthFactor(null)
+      }
+    } catch (error) {
+      console.error('Error searching for position:', error)
+      showStatus('Error checking position')
+      setUserHealthFactor(null)
+    } finally {
+      setIsLoadingHF(false)
+    }
   }
   
   const handleLiquidate = async () => {
-    // Implementation will be added later
-    console.log('Liquidating', userAddress, 'covering', debtToCover, 'DSC with', selectedToken)
+    if (!isConnected || !address || !userAddress || !debtToCover || parseFloat(debtToCover) <= 0) {
+      showStatus('Please connect wallet and enter valid values')
+      return
+    }
+    
+    // Check if position is liquidatable (health factor < 1.0)
+    if (userHealthFactor && Number(formatUnits(userHealthFactor, 18)) >= 1.0) {
+      showStatus('This position is not liquidatable (health factor ≥ 1.0)')
+      return
+    }
+    
+    try {
+      showStatus('Liquidating position...')
+      
+      // Convert debt to cover to wei
+      const debtInWei = parseUnits(debtToCover, 18) // DSC has 18 decimals
+      
+      await writeContract({
+        address: addresses.dscEngine,
+        abi: abis.dscEngine,
+        functionName: 'liquidate',
+        args: [tokenAddresses[selectedToken], userAddress as `0x${string}`, debtInWei],
+      })
+      
+      showStatus('Liquidation successful!')
+      setDebtToCover('')
+      
+      // Refresh health factor
+      handleSearch()
+    } catch (error) {
+      console.error('Error liquidating:', error)
+      showStatus('Error: ' + (error instanceof Error ? error.message : 'Transaction failed'))
+    }
   }
 
   return (
@@ -26,6 +153,12 @@ export default function LiquidatePage() {
       <Header />
       <div className="container mx-auto p-4 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Liquidations</h1>
+        
+        {statusMessage && (
+          <div className="mb-4 p-4 rounded-md bg-primary/10 text-primary font-medium">
+            {statusMessage}
+          </div>
+        )}
 
         {!isConnected ? (
           <div className="bg-muted rounded-lg p-8 text-center">
@@ -50,8 +183,9 @@ export default function LiquidatePage() {
                   <button 
                     className="bg-primary text-primary-foreground px-4 py-2 rounded-r"
                     onClick={handleSearch}
+                    disabled={isLoadingHF}
                   >
-                    Search
+                    {isLoadingHF ? 'Searching...' : 'Search'}
                   </button>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -100,23 +234,24 @@ export default function LiquidatePage() {
                 </div>
                 <div className="flex justify-between mb-2">
                   <span>Collateral received:</span>
-                  <span>0 {selectedToken}</span>
+                  <span>{collateralReceived} {selectedToken}</span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span>Bonus (10%):</span>
-                  <span>0 {selectedToken}</span>
+                  <span>{bonusAmount} {selectedToken}</span>
                 </div>
                 <div className="flex justify-between font-medium">
                   <span>Total:</span>
-                  <span>0 {selectedToken}</span>
+                  <span>{totalReceived} {selectedToken}</span>
                 </div>
               </div>
               
               <button 
                 className="bg-primary text-primary-foreground w-full py-2 rounded"
                 onClick={handleLiquidate}
+                disabled={isPending || !userHealthFactor || Number(formatUnits(userHealthFactor || BigInt(0), 18)) >= 1.0}
               >
-                Liquidate Position
+                {isPending ? 'Processing...' : 'Liquidate Position'}
               </button>
             </div>
           </>

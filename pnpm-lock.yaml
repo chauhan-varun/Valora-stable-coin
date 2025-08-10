@@ -35,6 +35,9 @@ importers:
       react-hook-form:
         specifier: ^7.62.0
         version: 7.62.0(react@19.1.0)
+      styles:
+        specifier: link:@rainbow-me/rainbowkit/styles
+        version: link:@rainbow-me/rainbowkit/styles
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1

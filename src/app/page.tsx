@@ -3,17 +3,20 @@
 import { useAccount } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useHealthFactor } from '@/hooks/useHealthFactor'
+import Header from '@/components/Header'
 
 export default function Home() {
   const { isConnected } = useAccount()
   const { healthFactor, isLoading } = useHealthFactor()
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">DSC Dashboard</h1>
-        <ConnectButton />
-      </div>
+    <>
+      <Header />
+      <div className="container mx-auto p-4 max-w-4xl">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">DSC Dashboard</h1>
+          <ConnectButton />
+        </div>
 
       {!isConnected ? (
         <div className="bg-muted rounded-lg p-8 text-center">
@@ -66,5 +69,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   )
 }
