@@ -353,14 +353,14 @@ export default function RedeemPage() {
 
         <div className={cn('transition-opacity duration-200', animateTab ? 'opacity-100' : 'opacity-0')}>
         {!isConnected ? (
-          <div className="bg-muted rounded-lg p-8 text-center">
+          <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg p-8 text-center`}>
             <h2 className="text-2xl font-bold mb-4">Connect Wallet</h2>
             <p className="mb-6">You need to connect your wallet to redeem collateral and burn DSC</p>
             <ConnectButton />
           </div>
         ) : viewMode === 'combined' ? (
           // COMBINED VIEW - DEFAULT
-          <div className="bg-card rounded-lg p-6 shadow">
+          <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg p-6 shadow-lg`}>
             <h2 className="text-xl font-medium mb-4">Redeem Collateral & Burn DSC</h2>
             
             <div className="mb-4">
