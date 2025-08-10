@@ -36,7 +36,7 @@ export default function Home() {
         </div>
 
         {!isConnected ? (
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8 text-center border border-border/50 shadow-lg animate-slideInUp hover-card">
+          <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg p-8 text-center shadow-lg animate-slideInUp ${theme === 'dark' ? '' : 'hover-card'}`}>
             <div className="flex justify-center mb-6 animate-float">
               <Image src="/logo.png" alt="Valora" width={80} height={80} className="rounded-xl animate-pulse-subtle" />
             </div>
@@ -47,7 +47,7 @@ export default function Home() {
         ) : (
           <div className="flex flex-col gap-6 animate-slideInUp">
             {/* Position Health Card - standalone card with gray background */}
-            <div className={`${theme === 'dark' ? 'bg-[#3e3e46]' : 'bg-card/50 backdrop-blur-sm border border-border/50 hover-card'} rounded-lg p-6 shadow-lg transition-all`}>
+            <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50 hover-card'} rounded-lg p-6 shadow-lg transition-all`}>
               <div className="flex items-center gap-2 mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                   <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
@@ -58,7 +58,7 @@ export default function Home() {
             </div>
             
             {/* Account Info Card - Full width with dark background */}
-            <div className={`${theme === 'dark' ? 'bg-[#3e3e46]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg shadow-lg animate-fadeIn`} style={{animationDelay: '0.2s'}}>
+            <div className={`${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} rounded-lg shadow-lg animate-fadeIn`} style={{animationDelay: '0.2s'}}>
               <AccountInfo />
             </div>
           </div>
@@ -67,7 +67,7 @@ export default function Home() {
         <div className="mt-10 animate-slideInUp" style={{animationDelay: '0.3s'}}>
           <h2 className="text-xl text-blue-400 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="/mint" className={`group ${theme === 'dark' ? 'bg-[#383845]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            <a href="/mint" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -79,7 +79,7 @@ export default function Home() {
               <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">Deposit & Mint</h3>
               <p className="text-sm text-muted-foreground">Add collateral and mint DSC</p>
             </a>
-            <a href="/redeem" className={`group ${theme === 'dark' ? 'bg-[#383845]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            <a href="/redeem" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -97,7 +97,7 @@ export default function Home() {
               <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">Redeem & Burn</h3>
               <p className="text-sm text-muted-foreground">Burn DSC and withdraw collateral</p>
             </a>
-            <a href="/liquidate" className={`group ${theme === 'dark' ? 'bg-[#383845]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
+            <a href="/liquidate" className={`group ${theme === 'dark' ? 'bg-[#171720]' : 'bg-card/50 backdrop-blur-sm border border-border/50'} px-6 py-4 rounded-lg text-center transition-all duration-300 hover:bg-primary/10 ${theme === 'dark' ? '' : 'hover-card'}`}>
               <div className="flex justify-center mb-2">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">

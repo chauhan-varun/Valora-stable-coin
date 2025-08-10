@@ -32,7 +32,7 @@ export default function HealthFactorGauge({
   const width = hfValue ? Math.min(hfValue / 2, 1) * 100 : 0
   
   return (
-    <div className={isDarkMode ? "bg-[#3e3e46] rounded-lg p-4 shadow-md" : "bg-card/50 backdrop-blur-sm rounded-lg p-4 shadow-md hover-card"}>
+    <div className={isDarkMode ? "bg-[#171720] rounded-lg p-4 shadow-md" : "bg-card/50 backdrop-blur-sm rounded-lg p-4 shadow-md hover-card"}>
       <div className="flex justify-between items-center mb-2">
         <span className="flex items-center gap-1.5 text-foreground">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -45,7 +45,7 @@ export default function HealthFactorGauge({
         </span>
       </div>
       
-      <div className={isDarkMode ? "w-full bg-[#2a2a32] rounded-full h-2.5" : "w-full bg-secondary/30 rounded-full h-2.5"}>
+      <div className={isDarkMode ? "w-full bg-[#0f0f13] rounded-full h-2.5" : "w-full bg-secondary/30 rounded-full h-2.5"}>
         {isLoading ? (
           <div className="animate-pulse bg-gray-500 h-2.5 rounded-full w-3/4"></div>
         ) : (
