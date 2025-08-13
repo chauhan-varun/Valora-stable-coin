@@ -1,14 +1,25 @@
-# DSC Protocol - Decentralized Stablecoin Platform
+# DSC Protocol - Frontend 
 
-A production-ready, over-collateralized, algorithmic stablecoin protocol designed to maintain a soft peg of 1 DSC = 1 USD. The system is inspired by MakerDAO's DAI but built from scratch with modern Solidity practices, comprehensive testing, and a user-friendly Next.js frontend.
+A modern, responsive frontend for the DSC (Decentralized Stablecoin) Protocol. This Next.js application provides a user-friendly interface to interact with the production-ready, over-collateralized, algorithmic stablecoin system that maintains a soft peg of 1 DSC = 1 USD.
 
 ![Valora Logo](public/logo.png)
 
-## � Introduction
+## 🎯 Introduction
 
-This repository contains both the smart contracts and frontend application for a fully decentralized stablecoin protocol. Users can deposit approved collateral tokens (WETH, WBTC), mint DSC stablecoins, maintain healthy collateralization ratios, and participate in liquidations to maintain system health.
+This repository contains the **frontend application** for the DSC Protocol. The smart contracts (backend) are located in a separate repository: **[foundry-defi-stablecoin](https://github.com/chauhan-varun/foundry-defi-stablecoin)**.
 
-## 🔑 Key Characteristics
+The frontend allows users to:
+- Deposit approved collateral tokens (WETH, WBTC)
+- Mint DSC stablecoins against their collateral
+- Maintain healthy collateralization ratios
+- Redeem collateral by burning DSC tokens
+- Participate in liquidations to maintain system health
+
+
+A production-ready, over-collateralized, algorithmic stablecoin protocol designed to maintain a soft peg of 1 DSC = 1 USD. The system is inspired by MakerDAO's DAI but built from scratch with modern Solidity practices, comprehensive testing, and a user-friendly Next.js frontend.
+
+
+## 🔑 Protocol Characteristics
 
 - 🔒 **Exogenously collateralized**: Backed by external crypto assets (WETH, WBTC)
 - 📊 **200% collateral requirement**: Enforced via a 50% liquidation threshold
@@ -16,7 +27,16 @@ This repository contains both the smart contracts and frontend application for a
 - ⚡ **Built with Foundry**: For blazing-fast compilation, testing, and deployment
 - 🛡️ **Security-first**: Comprehensive testing with 100% line coverage
 - 📈 **Liquidation incentives**: 10% bonus for liquidators maintaining system health
-- 🎨 **Modern Frontend**: Built with Next.js 15, React 19, and Web3 integrations
+
+## 🎨 Frontend Features
+
+This Next.js application provides:
+
+- **Modern UI/UX**: Built with Next.js 15, React 19, and Web3 integrations
+- **Real-time Monitoring**: Live health factor tracking and position management
+- **Multi-wallet Support**: RainbowKit integration for seamless wallet connections
+- **Responsive Design**: Mobile-friendly interface with dark/light theme support
+- **Transaction Management**: Clear status updates and error handling
 
 ## 🌟 System Properties
 
@@ -31,13 +51,7 @@ This repository contains both the smart contracts and frontend application for a
 
 ## 🚀 Technology Stack
 
-### Smart Contracts (Backend)
-- **Foundry**: Development framework for compilation, testing, and deployment
-- **Solidity**: Smart contract programming language
-- **Chainlink**: Decentralized oracle network for price feeds
-- **OpenZeppelin**: Battle-tested smart contract libraries
-
-### Frontend Application
+### Frontend Application (This Repository)
 - **Next.js 15**: React framework with app router
 - **React 19**: Latest React version with modern features
 - **TypeScript**: Type-safe development
@@ -47,58 +61,26 @@ This repository contains both the smart contracts and frontend application for a
 - **Zustand**: State management
 - **React Hook Form**: Form handling with Zod validation
 
-## 🏗️ Architecture
+### Smart Contracts (Backend - Separate Repository)
 
-### Smart Contract Components
+- **Foundry**: Development framework for compilation, testing, and deployment
+- **Solidity**: Smart contract programming language
+- **Chainlink**: Decentralized oracle network for price feeds
+- **OpenZeppelin**: Battle-tested smart contract libraries
 
-#### 1. DecentralizedStableCoin.sol
-```solidity
-contract DecentralizedStableCoin is ERC20Burnable, Ownable
-```
-- ERC-20 token contract for DSC stablecoin
-- Extends OpenZeppelin's ERC20Burnable and Ownable
-- Minting/burning restricted to DSCEngine contract only
-- Implements standard ERC-20 functionality with burn capability
 
-**Key Functions:**
-- `mint(address to, uint256 amount)` - Only callable by DSCEngine
-- `burn(uint256 amount)` - Inherited from ERC20Burnable
-- Standard ERC-20 functions (transfer, approve, etc.)
+### Frontend Components Integration
 
-#### 2. DSCEngine.sol
-```solidity
-contract DSCEngine is ReentrancyGuard
-```
-- Core protocol logic and system management
-- Handles all collateral operations and DSC lifecycle
-- Implements comprehensive safety checks and liquidation mechanisms
-- Uses Chainlink oracles for reliable price feeds
+The frontend interacts with the deployed smart contracts via Web3 hooks and provides:
 
-**Core Functions:**
+- **Real-time Data**: Live health factors, collateral values, and DSC balances
+- **Transaction Interface**: User-friendly forms for all protocol operations
+- **Wallet Integration**: Seamless connection with multiple wallet providers
+- **Error Handling**: Comprehensive transaction status and error management
 
-| Function | Purpose | Access |
-|----------|---------|--------|
-| `depositCollateral()` | Deposit approved collateral | Public |
-| `mintDsc()` | Mint DSC against collateral | Public |
-| `depositCollateralAndMintDsc()` | Combined deposit + mint | External |
-| `redeemCollateral()` | Withdraw collateral | External |
-| `burnDsc()` | Burn DSC to improve health | External |
-| `liquidate()` | Liquidate unhealthy positions | External |
-| `getHealthFactor()` | Check position health | View |
+### Quick Reference
 
-### System Constants
-```solidity
-uint256 private constant LIQUIDATION_THRESHOLD = 50;        // 50%
-uint256 private constant LIQUIDATION_BONUS = 10;           // 10%
-uint256 private constant MIN_HEALTH_FACTOR = 1 ether;      // 1.0
-uint256 private constant PRECISION = 1e18;                 // 18 decimals
-```
-
-## 📊 Health Factor & Liquidations
-
-### Health Factor Calculation
-The health factor determines the safety of a user's position:
-
+**Health Factor Calculation:**
 ```
 healthFactor = (collateralValueUSD * LIQUIDATION_THRESHOLD) / totalDscMinted
 ```
@@ -109,29 +91,12 @@ healthFactor = (collateralValueUSD * LIQUIDATION_THRESHOLD) / totalDscMinted
 - `< 1.0`: ❌ Unhealthy position, can be liquidated
 - `∞`: 🌟 No debt, perfect health
 
-### Mathematical Formulas
-
-**Health Factor:**
-```
-Health Factor = (Collateral Value USD × 50%) ÷ Total DSC Minted
-```
-
-**Collateral Value:**
-```
-Collateral Value = Σ(Token Amount × Token Price USD)
-```
-
-**Liquidation Collateral:**
-```
-Collateral to Transfer = (Debt to Cover ÷ Collateral Price) × 1.10
-```
-
 ## 📦 Installation & Setup
 
 ### Prerequisites
 - **Node.js 18+**: For frontend development
-- **Git**: For cloning and version control
 - **pnpm**: Package manager for frontend dependencies
+- **Git**: For cloning and version control
 
 ### 1. Clone the Repository
 ```bash
@@ -139,45 +104,26 @@ git clone https://github.com/chauhan-varun/defi-stable-coin.git
 cd defi-stable-coin
 ```
 
-### 2. Smart Contract Setup
-```bash
-# Install Foundry dependencies
-forge install
-
-# Build contracts
-forge build
-
-# Run tests
-forge test
-
-# Generate coverage report
-forge coverage
-```
-
-### 3. Frontend Setup
+### 2. Install Dependencies
 ```bash
 # Install frontend dependencies
 pnpm install
+```
 
+### 3. Environment Configuration
+```bash
 # Set up environment variables
 cp .env.example .env.local
 ```
 
 Add your environment variables:
 ```env
-# Smart Contract Addresses
+# Smart Contract Addresses (deployed contracts from foundry-defi-stablecoin repo)
 NEXT_PUBLIC_DSC_ENGINE_ADDRESS=0x...
 NEXT_PUBLIC_DSC_TOKEN_ADDRESS=0x...
 
-# RPC URLs (for smart contract deployment)
-MAINNET_RPC_URL=https://eth-mainnet.alchemyapi.io/v2/your-api-key
-SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/your-api-key
-
-# Private Keys (use test accounts only)
-PRIVATE_KEY=your-private-key-here
-
-# API Keys
-ETHERSCAN_API_KEY=your-etherscan-api-key
+# Optional: For wallet connect and additional features
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your-project-id
 ```
 
 ### 4. Run the Application
@@ -225,14 +171,52 @@ pnpm dev
     └── logo.png               # Project logo
 ```
 
-### Frontend Testing
+## 🧪 Frontend Testing
+
 ```bash
 # Run frontend tests (if implemented)
 pnpm test
 
 # Run with coverage
 pnpm test:coverage
+
+# Run linting
+pnpm lint
+
+# Type checking
+pnpm type-check
 ```
+
+## 🚀 Deployment
+
+### Frontend Deployment
+
+```bash
+# Build for production
+pnpm build
+
+# Start production server  
+pnpm start
+
+# Deploy to Vercel (recommended)
+# Connect your GitHub repository to Vercel for automatic deployments
+```
+
+### Environment Variables for Production
+
+Make sure to set these in your deployment platform:
+
+```env
+NEXT_PUBLIC_DSC_ENGINE_ADDRESS=0x... # Deployed DSCEngine contract address
+NEXT_PUBLIC_DSC_TOKEN_ADDRESS=0x...  # Deployed DSC token contract address
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your-project-id
+```
+
+### Key Contract Addresses
+
+The frontend connects to these deployed contracts:
+- **DSC Engine**: Handles all protocol logic and operations
+- **DSC Token**: ERC-20 stablecoin token contract
 
 
 ### Deployment
@@ -374,24 +358,7 @@ The frontend integrates with two main smart contracts:
 
 ## 🛠️ Development Commands
 
-### Foundry Commands
-```bash
-# Essential Commands
-forge build                 # Compile contracts
-forge test                  # Run test suite
-forge coverage             # Generate coverage report
-forge fmt                  # Format Solidity code
-forge snapshot             # Create gas snapshots
-forge doc                  # Generate documentation
-
-# Advanced Commands
-forge install openzeppelin/openzeppelin-contracts  # Install dependency
-forge remove openzeppelin-contracts               # Remove dependency
-forge update                                      # Update all dependencies
-forge flatten src/DSCEngine.sol                  # Flatten contracts
-```
-
-### Frontend Commands
+### Frontend Development
 ```bash
 # Development
 pnpm dev                   # Start development server
@@ -399,6 +366,7 @@ pnpm dev --turbopack      # Start with Turbopack (faster)
 pnpm build                # Build for production
 pnpm start                # Start production server
 pnpm lint                 # Run ESLint
+pnpm type-check           # TypeScript type checking
 ```
 
 ## ⚠️ Risk Considerations
@@ -423,50 +391,39 @@ pnpm lint                 # Run ESLint
 - Monitor collateral prices regularly during volatile markets
 - Consider partial redemptions during significant market volatility
 - Understand liquidation mechanics before using the protocol
-- Never invest more than you can afford to lose
-- Verify smart contract addresses before interacting
-
-## 🚀 Deployment
-
-### Build for production
-```bash
-pnpm build
-```
-
-### Start production server
-```bash
-pnpm start
-```
-
-### Deploy to Vercel
-The app is optimized for deployment on Vercel. Simply connect your GitHub repository to Vercel and it will automatically deploy on each push to the main branch.
-
-## 🛠️ Development
-
-### Run linting
-```bash
-pnpm lint
-```
-
-### Development with Turbopack
-```bash
-pnpm dev --turbopack
-```
-
 ## 📚 Learn More
 
+### Frontend Technologies
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Wagmi Documentation](https://wagmi.sh)
 - [RainbowKit Documentation](https://rainbowkit.com)
 - [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+
+### Smart Contracts & DeFi
+- [DSC Smart Contracts Repository](https://github.com/chauhan-varun/foundry-defi-stablecoin)
+- [Foundry Documentation](https://book.getfoundry.sh/)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+- [Chainlink Price Feeds](https://docs.chain.link/data-feeds/price-feeds)
 
 ## 🤝 Contributing
 
+We welcome contributions to improve the frontend application!
+
+### Development Process
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Make your changes and test thoroughly
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+### Code Standards
+- Follow TypeScript best practices
+- Use Tailwind CSS for styling
+- Maintain responsive design principles
+- Write clear, descriptive component names
+- Add proper error handling for Web3 interactions
 
 ## 📄 License
 
@@ -474,15 +431,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ⚠️ Disclaimer
 
-This is an experimental DeFi protocol. Please use at your own risk and never invest more than you can afford to lose. Always verify smart contract addresses and do your own research before interacting with any DeFi protocol.
+This is an experimental DeFi protocol frontend. Please use at your own risk and never invest more than you can afford to lose. Always verify smart contract addresses and do your own research before interacting with any DeFi protocol.
 
 ## 📞 Support
 
 If you have any questions or need support, please:
 - Open an issue on GitHub
-- Check the documentation
-- Review the smart contract code
+- Check the [smart contracts documentation](https://github.com/chauhan-varun/foundry-defi-stablecoin)
+- Review the frontend code and components
+
+## 👨‍💻 Author
+
+**Varun Chauhan** - Frontend & Smart Contract Developer
+
+- 🐙 GitHub: [chauhan-varun](https://github.com/chauhan-varun)
+- 📧 Email: varunchauhan097@gmail.com
+- 🔗 Smart Contracts: [foundry-defi-stablecoin](https://github.com/chauhan-varun/foundry-defi-stablecoin)
 
 ---
 
-Built with ❤️ by [Varun Chauhan](https://github.com/chauhan-varun)
+Built with ❤️ for the DeFi community
