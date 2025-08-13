@@ -6,7 +6,7 @@ A modern, responsive frontend for the DSC (Decentralized Stablecoin) Protocol. T
 
 ## 🎯 Introduction
 
-This repository contains the **frontend application** for the DSC Protocol. The smart contracts (backend) are located in a separate repository: **[foundry-defi-stablecoin](https://github.com/chauhan-varun/foundry-defi-stablecoin)**.
+This repository contains the **frontend application** for the DSC Protocol. The smart contracts (backend) are located in a separate repository: **[Valora-stablecoin-contract](https://github.com/chauhan-varun/Valora-stablecoin-contract)**.
 
 The frontend allows users to:
 - Deposit approved collateral tokens (WETH, WBTC)
@@ -118,7 +118,7 @@ cp .env.example .env.local
 
 Add your environment variables:
 ```env
-# Smart Contract Addresses (deployed contracts from foundry-defi-stablecoin repo)
+# Smart Contract Addresses (deployed contracts from Valora-stablecoin-contract repo)
 NEXT_PUBLIC_DSC_ENGINE_ADDRESS=0x...
 NEXT_PUBLIC_DSC_TOKEN_ADDRESS=0x...
 
@@ -401,7 +401,7 @@ pnpm type-check           # TypeScript type checking
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
 ### Smart Contracts & DeFi
-- [DSC Smart Contracts Repository](https://github.com/chauhan-varun/foundry-defi-stablecoin)
+- [DSC Smart Contracts Repository](https://github.com/chauhan-varun/Valora-stablecoin-contract)
 - [Foundry Documentation](https://book.getfoundry.sh/)
 - [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
 - [Chainlink Price Feeds](https://docs.chain.link/data-feeds/price-feeds)
@@ -437,7 +437,7 @@ This is an experimental DeFi protocol frontend. Please use at your own risk and 
 
 If you have any questions or need support, please:
 - Open an issue on GitHub
-- Check the [smart contracts documentation](https://github.com/chauhan-varun/foundry-defi-stablecoin)
+- Check the [smart contracts documentation](https://github.com/chauhan-varun/Valora-stablecoin-contract)
 - Review the frontend code and components
 
 ## 👨‍💻 Author
@@ -446,8 +446,6 @@ If you have any questions or need support, please:
 
 - 🐙 GitHub: [chauhan-varun](https://github.com/chauhan-varun)
 - 📧 Email: varunchauhan097@gmail.com
-- 🔗 Smart Contracts: [foundry-defi-stablecoin](https://github.com/chauhan-varun/foundry-defi-stablecoin)
-
 ---
 
 Built with ❤️ for the DeFi community
