@@ -63,9 +63,16 @@ export default function RedeemPage() {
     try {
       showStatus('Redeeming collateral...')
       
-      // Redeem collateral
-      const decimals = selectedToken === 'WETH' ? 18 : 8
-      const amountInWei = parseUnits(collateralAmount, decimals)
+      // Handle the amount input - support both direct wei input and decimal values
+      let amountInWei: bigint;
+      try {
+        // Try to parse the input directly as a bigint (wei)
+        amountInWei = BigInt(collateralAmount)
+      } catch {
+        // If that fails, treat it as token units and convert to wei
+        const decimals = selectedToken === 'WETH' ? 18 : 8
+        amountInWei = parseUnits(collateralAmount, decimals)
+      }
       
       await writeContract({
         address: addresses.dscEngine,
