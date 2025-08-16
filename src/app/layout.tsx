@@ -36,15 +36,17 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground min-h-screen flex flex-col`}
-        style={{ minHeight: '100vh' }}
+        style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
         suppressHydrationWarning
       >
         <Providers>
-          <Header />
-          <main className="flex-1 container mx-auto py-6 px-4 animate-fadeIn">
-            {children}
-          </main>
-          <Footer />
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1 container mx-auto py-6 px-4 animate-fadeIn">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

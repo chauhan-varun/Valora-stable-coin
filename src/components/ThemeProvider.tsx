@@ -52,10 +52,16 @@ export function ThemeProvider({
         ? 'dark'
         : 'light'
       root.classList.add(systemTheme)
+      
+      // Set attribute for RainbowKit
+      document.documentElement.setAttribute('data-rainbow-theme', systemTheme)
       return
     }
 
     root.classList.add(theme)
+    
+    // Set attribute for RainbowKit
+    document.documentElement.setAttribute('data-rainbow-theme', theme)
     
     // Force a repaint to ensure the theme is applied immediately
     document.body.style.display = 'none'
