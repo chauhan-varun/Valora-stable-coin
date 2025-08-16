@@ -17,15 +17,15 @@ export default function HealthFactorGauge({
   // Health factor is stored as a fixed point number with 18 decimals
   const hfValue = healthFactor ? Number(healthFactor) / 1e18 : undefined
   
-  // Determine color based on health factor value
-  let color = 'bg-green-500'
+  // Determine color based on health factor value in black and white theme
+  let color = 'bg-black'
   
   if (hfValue === undefined) {
-    color = 'bg-gray-300'
+    color = 'bg-gray-500'
   } else if (hfValue < 1.0) {
-    color = 'bg-red-500'
+    color = isDarkMode ? 'bg-white' : 'bg-black'
   } else if (hfValue < 1.2) {
-    color = 'bg-amber-500'
+    color = isDarkMode ? 'bg-gray-300' : 'bg-gray-700'
   }
   
   // Calculate width for the gauge - cap at 100%
@@ -40,7 +40,7 @@ export default function HealthFactorGauge({
           </svg>
           Health Factor
         </span>
-        <span className="text-green-400 font-bold">
+        <span className={isDarkMode ? "text-white font-bold" : "text-black font-bold"}>
           {isLoading ? 'Loading...' : hfValue ? hfValue.toFixed(2) : 'N/A'}
         </span>
       </div>
@@ -57,8 +57,8 @@ export default function HealthFactorGauge({
       </div>
       
       <div className="flex justify-between text-xs mt-1">
-        <span className="text-red-500">Liquidation</span>
-        <span className="text-green-500">Safe</span>
+        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Liquidation</span>
+        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Safe</span>
       </div>
     </div>
   )
