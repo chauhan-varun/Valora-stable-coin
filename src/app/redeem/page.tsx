@@ -579,6 +579,29 @@ export default function RedeemPage() {
           </div>
         </div>
         </div>
+        
+        {/* WETH Helper Note */}
+        <div className="mt-8 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+          <h3 className="text-lg font-medium mb-2 text-black dark:text-white">Need to convert WETH back to ETH?</h3>
+          <p className="mb-3 text-gray-700 dark:text-gray-300">
+            After redeeming your WETH collateral, you can convert it back to regular ETH on Sepolia testnet:
+          </p>
+          <ol className="list-decimal pl-5 mb-4 text-gray-700 dark:text-gray-300 space-y-1">
+            <li>Visit the <a href="https://sepolia.etherscan.io/address/0xdd13E55209Fd76AfE204dBda4007C227904f0a81#writeContract" 
+                className="text-gray-900 dark:text-gray-100 underline hover:text-gray-600 dark:hover:text-gray-400" 
+                target="_blank" rel="noopener noreferrer">
+                WETH contract on Sepolia Etherscan
+              </a>
+            </li>
+            <li>Connect your wallet</li>
+            <li>Navigate to the "Contract" tab and then "Write Contract"</li>
+            <li>Use the <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">withdraw</code> function and enter the amount of WETH you want to convert back to ETH</li>
+            <li>Confirm the transaction and you'll receive an equivalent amount of ETH</li>
+          </ol>
+          <p className="text-gray-700 dark:text-gray-300">
+            Remember, to use this platform you need WETH, but you can always convert between WETH and ETH using the contract functions.
+          </p>
+        </div>
       </div>
     </>
   )
