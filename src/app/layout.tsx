@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -18,9 +18,72 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "DSC dApp",
-  description: "Decentralized Stablecoin Application",
+  title: "Valora Stablecoin | Decentralized Crypto-Backed Stablecoin Platform",
+  description: "Valora is a fully decentralized, overcollateralized stablecoin platform that allows you to mint, redeem, and liquidate positions with multiple collateral types. Earn yield on your crypto assets while maintaining price stability in volatile markets.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo.png', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' }
+    ],
+    shortcut: '/logo.png'
+  },
+  keywords: [
+    "stablecoin", 
+    "cryptocurrency", 
+    "defi", 
+    "valora", 
+    "decentralized finance", 
+    "crypto-backed stablecoin", 
+    "overcollateralized", 
+    "crypto yield", 
+    "ethereum", 
+    "defi protocol",
+    "mint stablecoins",
+    "digital assets",
+    "liquidity provider",
+    "collateral management"
+  ],
+  authors: [{ name: "Valora Protocol", url: "https://valora-stablecoin.vercel.app" }],
+  creator: "Valora Protocol Team",
+  publisher: "Valora Protocol",
+  metadataBase: new URL("https://valora-stablecoin.vercel.app"),
+  openGraph: {
+    title: "Valora Stablecoin | Decentralized Crypto-Backed Stablecoin Platform",
+    description: "Mint, redeem, and manage crypto-backed stablecoin positions with Valora's decentralized protocol. Multiple collateral types supported with real-time health factor monitoring.",
+    images: ['/logo.png'],
+    type: "website",
+    siteName: "Valora Protocol",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Valora Stablecoin | Decentralized Crypto-Backed Stablecoin Platform",
+    description: "Mint, redeem, and manage crypto-backed stablecoin positions with Valora's decentralized protocol. Multiple collateral types supported with real-time health factor monitoring.",
+    images: ['/logo.png'],
+    creator: "@valoraprotocol",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  },
+  category: "Finance",
+  applicationName: "Valora Protocol",
 };
 
 
