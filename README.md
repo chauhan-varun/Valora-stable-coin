@@ -1,4 +1,4 @@
-# DSC Protocol - Frontend 
+# Valora Protocol - Frontend 
 
 A modern, responsive frontend for the DSC (Decentralized Stablecoin) Protocol. This Next.js application provides a user-friendly interface to interact with the production-ready, over-collateralized, algorithmic stablecoin system that maintains a soft peg of 1 DSC = 1 USD.
 
@@ -6,7 +6,7 @@ A modern, responsive frontend for the DSC (Decentralized Stablecoin) Protocol. T
 
 ## 🎯 Introduction
 
-This repository contains the **frontend application** for the DSC Protocol. The smart contracts (backend) are located in a separate repository: **[Valora-stablecoin-contract](https://github.com/chauhan-varun/Valora-stablecoin-contract)**.
+This repository contains the **frontend application** for the Valora Protocol. The smart contracts (backend) are located in a separate repository: **[Valora-stablecoin-contract](https://github.com/chauhan-varun/Valora-stablecoin-contract)**.
 
 The frontend allows users to:
 - Deposit approved collateral tokens (WETH, WBTC)
