@@ -1,279 +1,451 @@
-## DSC dApp Frontend Guide
+# DSC Protocol - Frontend 
 
-A practical guide for how the frontend of this protocol should look and behave. This document covers UX, pages, components, data flows, and integration patterns with `DSCEngine` and `DecentralizedStableCoin`.
+A modern, responsive frontend for the DSC (Decentralized Stablecoin) Protocol. This Next.js application provides a user-friendly interface to interact with the production-ready, over-collateralized, algorithmic stablecoin system that maintains a soft peg of 1 DSC = 1 USD.
 
-### Goals
-- Clear, safe UX for depositing collateral, minting/burning DSC, redeeming, and liquidations
-- Real-time health factor preview and risk visibility
-- Reliable on-chain state with optimistic UI and robust error handling
+![Valora Logo](public/logo.png)
 
-### Recommended Stack
-- Framework: Next.js (App Router) + TypeScript
-- Wallet/Contracts: wagmi v2 + viem, RainbowKit for wallet UI
-- UI: Tailwind CSS + Shadcn UI
-- State: Zustand/Jotai for local app state; React Query (via wagmi) for async
-- Formatting/Validation: Zod + react-hook-form
+## 🎯 Introduction
 
-### Environment
-Create `.env.local` in the frontend app and expose required values:
+This repository contains the **frontend application** for the DSC Protocol. The smart contracts (backend) are located in a separate repository: **[Valora-stablecoin-contract](https://github.com/chauhan-varun/Valora-stablecoin-contract)**.
 
+The frontend allows users to:
+- Deposit approved collateral tokens (WETH, WBTC)
+- Mint DSC stablecoins against their collateral
+- Maintain healthy collateralization ratios
+- Redeem collateral by burning DSC tokens
+- Participate in liquidations to maintain system health
+
+
+A production-ready, over-collateralized, algorithmic stablecoin protocol designed to maintain a soft peg of 1 DSC = 1 USD. The system is inspired by MakerDAO's DAI but built from scratch with modern Solidity practices, comprehensive testing, and a user-friendly Next.js frontend.
+
+
+## 🔑 Protocol Characteristics
+
+- 🔒 **Exogenously collateralized**: Backed by external crypto assets (WETH, WBTC)
+- 📊 **200% collateral requirement**: Enforced via a 50% liquidation threshold
+- 🌐 **Fully on-chain & permissionless**: No governance token, no fees
+- ⚡ **Built with Foundry**: For blazing-fast compilation, testing, and deployment
+- 🛡️ **Security-first**: Comprehensive testing with 100% line coverage
+- 📈 **Liquidation incentives**: 10% bonus for liquidators maintaining system health
+
+## 🎨 Frontend Features
+
+This Next.js application provides:
+
+- **Modern UI/UX**: Built with Next.js 15, React 19, and Web3 integrations
+- **Real-time Monitoring**: Live health factor tracking and position management
+- **Multi-wallet Support**: RainbowKit integration for seamless wallet connections
+- **Responsive Design**: Mobile-friendly interface with dark/light theme support
+- **Transaction Management**: Clear status updates and error handling
+
+## 🌟 System Properties
+
+| Property | Value | Description |
+|----------|-------|-------------|
+| Collateral Type | Exogenous | WETH, WBTC |
+| Stability Mechanism | Algorithmic | Liquidation-based |
+| Collateral Ratio | 200% minimum | Overcollateralized |
+| Liquidation Threshold | 50% | Positions liquidatable at 150% ratio |
+| Liquidation Bonus | 10% | Incentive for liquidators |
+| Peg Target | $1.00 USD | Soft peg maintained |
+
+## 🚀 Technology Stack
+
+### Frontend Application (This Repository)
+- **Next.js 15**: React framework with app router
+- **React 19**: Latest React version with modern features
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling with custom animations
+- **Wagmi & Viem**: Web3 React hooks and Ethereum interaction
+- **RainbowKit**: Wallet connection and management
+- **Zustand**: State management
+- **React Hook Form**: Form handling with Zod validation
+
+### Smart Contracts (Backend - Separate Repository)
+
+- **Foundry**: Development framework for compilation, testing, and deployment
+- **Solidity**: Smart contract programming language
+- **Chainlink**: Decentralized oracle network for price feeds
+- **OpenZeppelin**: Battle-tested smart contract libraries
+
+
+### Frontend Components Integration
+
+The frontend interacts with the deployed smart contracts via Web3 hooks and provides:
+
+- **Real-time Data**: Live health factors, collateral values, and DSC balances
+- **Transaction Interface**: User-friendly forms for all protocol operations
+- **Wallet Integration**: Seamless connection with multiple wallet providers
+- **Error Handling**: Comprehensive transaction status and error management
+
+### Quick Reference
+
+**Health Factor Calculation:**
+```
+healthFactor = (collateralValueUSD * LIQUIDATION_THRESHOLD) / totalDscMinted
+```
+
+**Health Factor Interpretation:**
+- `> 1.0`: ✅ Healthy position, cannot be liquidated
+- `= 1.0`: ⚠️ At liquidation threshold, risky position  
+- `< 1.0`: ❌ Unhealthy position, can be liquidated
+- `∞`: 🌟 No debt, perfect health
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- **Node.js 18+**: For frontend development
+- **pnpm**: Package manager for frontend dependencies
+- **Git**: For cloning and version control
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/chauhan-varun/defi-stable-coin.git
+cd defi-stable-coin
+```
+
+### 2. Install Dependencies
+```bash
+# Install frontend dependencies
+pnpm install
+```
+
+### 3. Environment Configuration
+```bash
+# Set up environment variables
+cp .env.example .env.local
+```
+
+Add your environment variables:
 ```env
-NEXT_PUBLIC_CHAIN_ID=11155111           # e.g., Sepolia
-NEXT_PUBLIC_RPC_URL=https://...
+# Smart Contract Addresses (deployed contracts from Valora-stablecoin-contract repo)
 NEXT_PUBLIC_DSC_ENGINE_ADDRESS=0x...
 NEXT_PUBLIC_DSC_TOKEN_ADDRESS=0x...
+
+# Optional: For wallet connect and additional features
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your-project-id
 ```
 
-ABIs can be consumed directly from Foundry artifacts:
-- `src/abi/dsc.json`
-- `src/abi/dsce.json`
+### 4. Run the Application
+```bash
+# Start development server
+pnpm dev
 
-### Navigation & Pages
-- Dashboard (`/`)
-  - Wallet connect, network guard, global notices
-  - Cards: Health Factor, Total Collateral (USD), DSC Debt, Collateral Breakdown
-  - Price panel with Chainlink price + staleness indicator
-- Deposit & Mint (`/mint`)
-  - Token selector (WETH/WBTC), amount input, allowance flow
-  - Optional combined action: depositCollateralAndMintDsc
-  - Live health factor preview BEFORE submit
-- Redeem & Burn (`/redeem`)
-  - Burn DSC and/or redeem collateral
-  - Live health factor preview AFTER action
-- Liquidations (`/liquidate`)
-  - List positions with HF < 1.0 (requires an indexer or subgraph; fallback: user search)
-  - Input `debtToCover`, show calculated collateral + 10% bonus
-  - Safety checks and confirmations
-- History (`/history`)
-  - Recent events: deposits, mints, burns, redemptions, liquidations
-
-### Component Hierarchy
-- Layout
-  - Header (Network selector, Wallet connect)
-  - Nav (Dashboard, Mint, Redeem, Liquidate)
-  - Toasts / Modals
-- Widgets
-  - HealthFactorGauge
-  - TokenSelector (WETH/WBTC)
-  - AmountInput with max button
-  - PriceCard (price, updatedAt, staleness)
-  - RiskBanner (HF warnings, oracle staleness)
-  - TxModal (pending/success/error)
-
-### UX & Safety
-- Show health factor prominently; color-code:
-  - HF ≥ 1.2: green, HF 1.0–1.2: amber, HF < 1.0: red
-- Pre-flight simulation: compute post-action HF client-side
-- Require explicit approval amounts (avoid infinite approvals by default)
-- Clear confirmations for risky actions (mint pushing HF near 1.0, redeem with debt)
-- Show price freshness: Chainlink updatedAt; flag > 3 hours as stale
-
-### Data & Contracts
-Key reads/writes from `DSCEngine`:
-- Reads
-  - `getHealthFactor(user)`
-  - `getAccountCollateralValue(user)`
-  - `getCollateralBalanceOfUser(user, token)`
-  - `getDscMinted(user)`
-  - `getUsdValue(token, amount)` / `getTokenAmountFromUsd(token, usdAmount)`
-  - `getCollateralTokens()` (for supported token list)
-- Writes
-  - `depositCollateral(token, amount)`
-  - `mintDsc(amountDscToMint)`
-  - `depositCollateralAndMintDsc(token, amount, amountDscToMint)`
-  - `redeemCollateral(token, amount)`
-  - `redeemCollateralForDsc(token, amount, amountDscToBurn)`
-  - `burnDsc(amount)`
-  - `liquidate(collateral, user, debtToCover)`
-
-Note: token transfers require ERC-20 approvals to the `DSCEngine` contract.
-
-### Health Factor Preview (Client-Side)
-Use the on-chain constants and getters to preview HF before/after:
-- Fetch:
-  - `totalDscMinted` via `getDscMinted(user)`
-  - `collateralValueUsd` via `getAccountCollateralValue(user)`
-  - Constants: `getLiquidationThreshold()`, `getLiquidationPrecision()`, `getMinHealthFactor()`, `getPrecision()`
-- Formula (mirrors contract):
-  - `collateralAdjusted = collateralValueUsd * LIQUIDATION_THRESHOLD / LIQUIDATION_PRECISION`
-  - `healthFactor = collateralAdjusted * PRECISION / totalDscMinted` (use max if minted == 0)
-
-### Liquidation Preview
-Given `debtToCover` and chosen `collateral`:
-- `tokenAmountFromDebtCovered = (debtToCover * PRECISION) / (price * ADDITIONAL_PRICEFEED_PRECISION)`
-- `bonusCollateral = tokenAmountFromDebtCovered * LIQUIDATION_BONUS / LIQUIDATION_PRECISION`
-- `totalCollateralToRedeem = tokenAmountFromDebtCovered + bonusCollateral`
-Display all three clearly, and the expected new HF.
-
-### Example Setup (wagmi + viem)
-```ts
-// lib/wagmi.ts
-import { createConfig, http } from 'wagmi'
-import { sepolia } from 'wagmi/chains'
-import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-
-export const config = createConfig(
-  getDefaultConfig({
-    appName: 'DSC dApp',
-    projectId: '<walletconnect-project-id>',
-    chains: [sepolia],
-    transports: { [sepolia.id]: http(process.env.NEXT_PUBLIC_RPC_URL) },
-  })
-)
+# Open browser
+# Navigate to http://localhost:3000
 ```
 
-```tsx
-// app/providers.tsx
-'use client'
-import { WagmiProvider } from 'wagmi'
-import { config } from '@/lib/wagmi'
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+## 🏗️ Project Structure
 
-const queryClient = new QueryClient()
-
-export default function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-}
+```
+├── src/                           # Frontend 
+│   ├── app/                      # Next.js app 
+│   │   ├── mint/                # Mint DSC tokens 
+│   │   ├── redeem/              # Redeem 
+│   │   ├── liquidate/           # Liquidation 
+│   │   └── About/               # About page
+│   ├── components/              # Reusable UI 
+│   │   ├── AccountInfo.tsx      # User account information display
+│   │   ├── Header.tsx           # Navigation header
+│   │   ├── HealthFactorGauge.tsx # Health factor visualization
+│   │   └── ThemeProvider.tsx    # Dark/light theme management
+│   ├── hooks/                   # Custom React hooks for Web3 interactions
+│   │   ├── useCollateralBalance.ts
+│   │   ├── useHealthFactor.ts
+│   │   ├── useDscMinted.ts
+│   │   └── useDepositAndMint.ts
+│   ├── lib/                     # Utility libraries
+│   │   ├── contracts.ts         # Contract addresses and ABIs
+│   │   ├── wagmi.ts            # Wagmi configuration
+│   │   └── utils.ts            # Helper functions
+│   └── abi/                    # Smart contract ABIs
+│       ├── dsc.json            # DSC token ABI
+│       └── dsce.json           # DSC Engine ABI
+├── contracts/                   # Smart contract source (if included)
+├── script/                     # Foundry deployment scripts
+├── test/                       # Comprehensive test suite
+│   ├── unit/                   # Unit tests
+│   ├── integration/            # Integration tests
+│   └── fuzz/                   # Fuzz testing
+└── public/                     # Static assets
+    └── logo.png               # Project logo
 ```
 
-```ts
-// lib/contracts.ts
-import DSCEngineArtifact from '../../out/DSCEngine.sol/DSCEngine.json'
-import DSCArtifact from '../../out/DecentralizedStableCoin.sol/DecentralizedStableCoin.json'
+## 🧪 Frontend Testing
 
-export const addresses = {
-  dscEngine: process.env.NEXT_PUBLIC_DSC_ENGINE_ADDRESS as `0x${string}`,
-  dscToken: process.env.NEXT_PUBLIC_DSC_TOKEN_ADDRESS as `0x${string}`,
-}
+```bash
+# Run frontend tests (if implemented)
+pnpm test
 
-export const abis = {
-  dscEngine: DSCEngineArtifact.abi,
-  dsc: DSCArtifact.abi,
-}
+# Run with coverage
+pnpm test:coverage
+
+# Run linting
+pnpm lint
+
+# Type checking
+pnpm type-check
 ```
 
-```ts
-// hooks/useHealthFactor.ts
-import { useAccount, useReadContract } from 'wagmi'
-import { abis, addresses } from '@/lib/contracts'
+## 🚀 Deployment
 
-export function useHealthFactor() {
-  const { address } = useAccount()
-  const { data, isLoading, refetch } = useReadContract({
-    address: addresses.dscEngine,
-    abi: abis.dscEngine,
-    functionName: 'getHealthFactor',
-    args: address ? [address] : undefined,
-    query: { enabled: Boolean(address) },
-  })
-  return { healthFactor: data as bigint | undefined, isLoading, refetch }
-}
+### Frontend Deployment
+
+```bash
+# Build for production
+pnpm build
+
+# Start production server  
+pnpm start
+
+# Deploy to Vercel (recommended)
+# Connect your GitHub repository to Vercel for automatic deployments
 ```
 
-```ts
-// hooks/useDepositAndMint.ts
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { abis, addresses } from '@/lib/contracts'
+### Environment Variables for Production
 
-export function useDepositAndMint() {
-  const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const receipt = useWaitForTransactionReceipt({ hash })
+Make sure to set these in your deployment platform:
 
-  async function depositAndMint(token: `0x${string}`, amount: bigint, dscToMint: bigint) {
-    // Ensure approval done in UI prior to this call
-    writeContract({
-      address: addresses.dscEngine,
-      abi: abis.dscEngine,
-      functionName: 'depositCollateralAndMintDsc',
-      args: [token, amount, dscToMint],
-    })
-  }
-
-  return { depositAndMint, hash, isPending, receipt, error }
-}
+```env
+NEXT_PUBLIC_DSC_ENGINE_ADDRESS=0x... # Deployed DSCEngine contract address
+NEXT_PUBLIC_DSC_TOKEN_ADDRESS=0x...  # Deployed DSC token contract address
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your-project-id
 ```
 
-### Token Approvals
-For WETH/WBTC approvals to `DSCEngine`:
-```ts
-import ERC20 from '@openzeppelin/contracts/build/contracts/ERC20.json' // or local minimal ABI
+### Key Contract Addresses
 
-writeContract({
-  address: tokenAddress,
-  abi: ERC20.abi,
-  functionName: 'approve',
-  args: [addresses.dscEngine, amount],
-})
+The frontend connects to these deployed contracts:
+- **DSC Engine**: Handles all protocol logic and operations
+- **DSC Token**: ERC-20 stablecoin token contract
+
+
+### Deployment
+```bash
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Deploy to Vercel (recommended)
+# Connect your GitHub repository to Vercel for automatic deployments
 ```
 
-### Error Mapping (User-Friendly)
-Map common revert errors to readable messages:
-- `DSCEngine__AmountMustBeGreaterThanZero` → "Amount must be greater than zero"
-- `DSCEngine__TokenNotSupported` → "Unsupported collateral token"
-- `DSCEngine__BreakHealthFactor` → "Action would break your health factor"
-- `DSCEngine__HealthFactorOk` → "Position is healthy; cannot liquidate"
-- `DSCEngine__HealthFactorNotImproved` → "Liquidation didn’t improve health factor"
-- `DSCEngine__MintFailed` / `DSCEngine__TransferFailed` → "Token operation failed"
+## ⛽ Gas Optimization
 
-Implement a parser for `errorName` from viem/wagmi and surface contextual guidance.
+### Gas Usage Estimates
+| Operation | Estimated Gas | Notes |
+|-----------|---------------|-------|
+| Deposit Collateral | ~85,000 | First deposit higher due to storage |
+| Mint DSC | ~65,000 | Includes health factor check |
+| Combined Deposit + Mint | ~140,000 | More efficient than separate calls |
+| Liquidation | ~180,000 | Complex multi-step operation |
+| Redeem Collateral | ~70,000 | Including health factor verification |
 
-### Visual Design Guidelines
-- Use token icons and USD formatting
-- Clear input grouping with helper text and inline validation
-- Prominent risk banners when HF approaches 1.0
-- Accessible colors (WCAG AA), keyboard nav, ARIA roles
+### Optimization Strategies
+- **Packed Structs**: Efficient storage layout
+- **Batch Operations**: Combined deposit + mint functions
+- **Minimal External Calls**: Reduced gas costs
+- **Efficient Loops**: Optimized collateral iterations
 
-### Testing Strategy
-- Unit: utility functions (HF preview, formatting)
-- Integration: hooks for reads/writes with mocked clients
-- E2E: Cypress/Playwright flows for Mint, Redeem, Liquidate on a local chain (Anvil)
+## 🛡️ Security Features
 
-### Optional Enhancements
-- Position indexer via The Graph/subgraph to populate liquidation table
-- Notifications (push/Socket) for HF threshold alerts
-- Batch calls (multicall) to reduce RPC round trips
+### Oracle Security
+- **Chainlink Integration**: Decentralized, battle-tested price feeds
+- **Stale Price Protection**: Using OracleLib for additional safety
+- **Multiple Price Sources**: WETH/USD and WBTC/USD feeds
 
-### High-Level User Flows (Mermaid)
-```mermaid
-flowchart LR
-  User -->|Connect| Wallet
-  User -->|Deposit & Mint| DSCEngine
-  DSCEngine -->|Mint| DSCToken
-  User -->|Burn & Redeem| DSCEngine
-  Liquidator -->|Liquidate| DSCEngine
-  DSCEngine -->|Transfer Collateral + Bonus| Liquidator
+### Smart Contract Security
+- **Reentrancy Protection**: All state-changing functions protected
+- **Input Validation**: Comprehensive validation of parameters
+- **Health Factor Monitoring**: Continuous position health checks
+- **Access Control**: Proper ownership and permission management
+
+### Economic Security
+- **Liquidation Incentives**: 10% bonus ensures rapid liquidations
+- **Overcollateralization**: 200% minimum provides price volatility buffer
+- **Partial Liquidations**: Allows precise debt coverage
+
+## 💡 How to Use the Protocol
+
+### 1. Minting DSC
+1. Connect your wallet to the application
+2. Navigate to the **Mint** page
+3. Select collateral type (WETH or WBTC)
+4. Enter collateral amount and desired DSC amount
+5. Approve token spending for the DSCEngine contract
+6. Execute `depositCollateralAndMintDsc` transaction
+7. Monitor your health factor to stay above 1.0
+
+### 2. Managing Positions
+- **Health Factor**: Monitor your position health (must stay above 1.0)
+- **Collateral Value**: Track total USD value of your deposited collateral
+- **DSC Minted**: View amount of DSC tokens you've minted
+- **Real-time Updates**: Position data updates automatically
+
+### 3. Redeeming Collateral
+1. Go to the **Redeem** page
+2. Choose between:
+   - **Burn DSC only**: Just repay debt
+   - **Redeem collateral + burn DSC**: Combined operation
+3. Enter amounts and approve DSC spending
+4. Execute burn/redeem transaction
+5. Collateral is returned to your wallet
+
+### 4. Liquidations
+1. Navigate to the **Liquidate** page
+2. Enter a user's address to check their health factor
+3. If health factor < 1.0, position is liquidatable
+4. Enter debt amount to cover (in DSC)
+5. Approve DSC spending for the debt amount
+6. Execute liquidation transaction
+7. Receive liquidated collateral + 10% bonus
+
+### Example Scenarios
+
+#### Healthy Position Example:
+- User deposits: **$2,000** worth of ETH
+- User mints: **$800** DSC
+- Health Factor: `($2,000 × 0.5) ÷ $800 = 1.25` ✅ **Safe**
+
+#### Liquidatable Position Example:
+- ETH price drops, collateral now worth: **$1,200**
+- User still owes: **$800** DSC  
+- Health Factor: `($1,200 × 0.5) ÷ $800 = 0.75` ❌ **Liquidatable**
+
+## 🔗 Smart Contract Integration
+
+The frontend integrates with two main smart contracts:
+
+### DSC Engine Contract
+- **Address**: Set via `NEXT_PUBLIC_DSC_ENGINE_ADDRESS`
+- **Functions Used**:
+  - `depositCollateralAndMintDsc()`
+  - `redeemCollateralForDsc()`
+  - `burnDsc()`
+  - `liquidate()`
+  - `getHealthFactor()`
+  - `getCollateralBalanceOfUser()`
+
+### DSC Token Contract  
+- **Address**: Set via `NEXT_PUBLIC_DSC_TOKEN_ADDRESS`
+- **Functions Used**:
+  - `approve()` - For spending allowances
+  - `balanceOf()` - Check DSC balance
+  - Standard ERC-20 functions
+
+## 🎨 Frontend Features
+
+### Real-time Health Factor Monitoring
+- **Visual Gauge**: Color-coded health factor display
+- **Risk Levels**: Safe (green), Warning (yellow), Danger (red)
+- **Automatic Updates**: Real-time position monitoring
+
+### User Experience
+- **Responsive Design**: Mobile-friendly interface
+- **Dark/Light Theme**: Toggle between themes
+- **Smooth Animations**: Enhanced user interactions
+- **Clear Status Messages**: Transaction feedback
+- **Input Validation**: Error prevention and handling
+- **Max Buttons**: Quick amount selection
+- **Wei/Decimal Support**: Flexible input formats
+
+### Wallet Integration
+- **RainbowKit**: Beautiful wallet connection UI
+- **Multi-wallet Support**: MetaMask, WalletConnect, etc.
+- **Account Information**: Real-time balance and position data
+- **Transaction Management**: Clear transaction states
+
+## 🛠️ Development Commands
+
+### Frontend Development
+```bash
+# Development
+pnpm dev                   # Start development server
+pnpm dev --turbopack      # Start with Turbopack (faster)
+pnpm build                # Build for production
+pnpm start                # Start production server
+pnpm lint                 # Run ESLint
+pnpm type-check           # TypeScript type checking
 ```
 
-```mermaid
-sequenceDiagram
-  participant U as User
-  participant UI as Frontend
-  participant W as Wallet
-  participant E as DSCEngine
-  participant T as DSC Token
+## ⚠️ Risk Considerations
 
-  U->>UI: Input deposit + mint
-  UI->>W: Request token approval
-  W-->>UI: Approval tx hash
-  UI->>W: Call depositCollateralAndMintDsc
-  W-->>UI: Tx hash
-  UI->>E: Read health factor
-  E-->>UI: HF updated
-  UI->>U: Show success and new HF
-```
+### Technical Risks
+| Risk Type | Impact | Mitigation |
+|-----------|--------|------------|
+| Oracle Risk | High | Chainlink integration + stale price protection |
+| Smart Contract Risk | High | Extensive testing + code audits |
+| Liquidation Risk | Medium | Economic incentives + partial liquidations |
+| Price Volatility | Medium | 200% overcollateralization requirement |
 
-dsc 0xa81AD6E369cE3a4e9925F7aBD24EfC34fc6fD9d5
-dsce 0x7DFCB34B67fF51E7a8B423aC8AD85D913d274327
-SEPOLIA_RPC_URL=https://blockchain.googleapis.com/v1/projects/ascendant-study-464412-p9/locations/us-central1/endpoints/ethereum-sepolia/rpc?key=AIzaSyAOXxShkTqMdBTanA-mXxc-vL458lNYc1I
-ETHERSCAN_API_KEY=W7QG2P873AU5MEFVYJKFDCQ54BQF1AR9VS
-PRIVATE_KEY=d3b7a3f0d716882a7dc8f678f375e9bf38cbd791440efc85246d2866ff72a17a
+### Operational Risks
+- **Price Feed Manipulation**: Mitigated by Chainlink's decentralized oracles
+- **Flash Loan Attacks**: Protected by reentrancy guards and health factor checks
+- **Governance Risk**: Eliminated by having no governance token
+- **Liquidity Risk**: Requires market makers for DSC/USD liquidity
 
-This guide should be sufficient to build a production-grade frontend for the DSC protocol with safe UX and robust on-chain integration. Update addresses and ABIs post-deployment, and tailor UI styling to your brand. 
+### User Safety Guidelines
+⚠️ **Important Safety Tips:**
+- Maintain health factor well above **1.2** for safety buffer
+- Monitor collateral prices regularly during volatile markets
+- Consider partial redemptions during significant market volatility
+- Understand liquidation mechanics before using the protocol
+## 📚 Learn More
+
+### Frontend Technologies
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Wagmi Documentation](https://wagmi.sh)
+- [RainbowKit Documentation](https://rainbowkit.com)
+- [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+
+### Smart Contracts & DeFi
+- [DSC Smart Contracts Repository](https://github.com/chauhan-varun/Valora-stablecoin-contract)
+- [Foundry Documentation](https://book.getfoundry.sh/)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+- [Chainlink Price Feeds](https://docs.chain.link/data-feeds/price-feeds)
+
+## 🤝 Contributing
+
+We welcome contributions to improve the frontend application!
+
+### Development Process
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and test thoroughly
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+### Code Standards
+- Follow TypeScript best practices
+- Use Tailwind CSS for styling
+- Maintain responsive design principles
+- Write clear, descriptive component names
+- Add proper error handling for Web3 interactions
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+This is an experimental DeFi protocol frontend. Please use at your own risk and never invest more than you can afford to lose. Always verify smart contract addresses and do your own research before interacting with any DeFi protocol.
+
+## 📞 Support
+
+If you have any questions or need support, please:
+- Open an issue on GitHub
+- Check the [smart contracts documentation](https://github.com/chauhan-varun/Valora-stablecoin-contract)
+- Review the frontend code and components
+
+## 👨‍💻 Author
+
+**Varun Chauhan** - Frontend & Smart Contract Developer
+
+- 🐙 GitHub: [chauhan-varun](https://github.com/chauhan-varun)
+- 📧 Email: varunchauhan097@gmail.com
+---
+
+Built with ❤️ for the DeFi community
