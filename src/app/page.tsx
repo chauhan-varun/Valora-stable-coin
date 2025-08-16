@@ -41,8 +41,26 @@ export default function Home() {
             <div className="flex justify-center mb-6 animate-float">
               <Image src="/logo.png" alt="Valora" width={80} height={80} className="rounded-xl animate-pulse-subtle" />
             </div>
-            <h2 className="text-2xl font-bold mb-4 gradient-text">Welcome to Valora</h2>
-            <p className="mb-6 text-muted-foreground">Connect your wallet to manage your decentralized stablecoin position</p>
+            <h2 className="text-2xl font-bold mb-4 gradient-text">Welcome to DSC Protocol</h2>
+            <p className="mb-6 text-muted-foreground">A production-ready, over-collateralized, algorithmic stablecoin designed to maintain a soft peg of 1 DSC = 1 USD</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-sm">
+              <div className="flex flex-col items-center p-3 rounded-lg bg-secondary/30">
+                <span className="text-primary text-xl mb-1">🔒</span>
+                <h3 className="font-medium">Exogenously Collateralized</h3>
+                <p className="text-muted-foreground text-center text-xs">Backed by WETH and WBTC</p>
+              </div>
+              <div className="flex flex-col items-center p-3 rounded-lg bg-secondary/30">
+                <span className="text-primary text-xl mb-1">📊</span>
+                <h3 className="font-medium">200% Collateral Ratio</h3>
+                <p className="text-muted-foreground text-center text-xs">Liquidation at 150% ratio</p>
+              </div>
+              <div className="flex flex-col items-center p-3 rounded-lg bg-secondary/30">
+                <span className="text-primary text-xl mb-1">🌐</span>
+                <h3 className="font-medium">Fully Permissionless</h3>
+                <p className="text-muted-foreground text-center text-xs">No governance token, no fees</p>
+              </div>
+            </div>
             <ConnectButton />
           </div>
         ) : (
