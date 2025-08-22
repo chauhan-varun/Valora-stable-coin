@@ -158,7 +158,7 @@ export default function AccountInfo({ userAddress }: AccountInfoProps) {
             <p className="text-lg font-bold">
               {displayUnit === 'wei' 
                 ? wethBalance ? (wethBalance as bigint).toString() + ' wei' : '0 wei'
-                : collateralValueInUsd ? "$" + collateralValueInUsd.toString() + ' USD' : '0 USD'
+                : collateralValueInUsd ? "$" + Number(formatUnits(collateralValueInUsd, 18)).toFixed(2) + ' USD' : '$0.00 USD'
               }
             </p>
           </div>
