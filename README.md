@@ -28,6 +28,14 @@ A production-ready, over-collateralized, algorithmic stablecoin protocol designe
 - 🛡️ **Security-first**: Comprehensive testing with 100% line coverage
 - 📈 **Liquidation incentives**: 10% bonus for liquidators maintaining system health
 
+### Core Protocol Parameters
+| Parameter | Value | Description |
+| --- | --- | --- |
+| Minimum Health Factor | `1.0` | Threshold below which position is liquidatable |
+| Liquidation Threshold | `50%` | Enforces 200% minimum collateralization |
+| Liquidation Bonus | `10%` | Reward bonus for liquidators |
+| Oracle Heartbeat | `3600s` | Maximum allowable staleness window |
+
 ## 🎨 Frontend Features
 
 This Next.js application provides:
