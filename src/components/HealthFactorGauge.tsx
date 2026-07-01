@@ -17,20 +17,16 @@ export default function HealthFactorGauge({
   // Health factor is stored as a fixed point number with 18 decimals
   const hfValue = healthFactor ? Number(healthFactor) / 1e18 : undefined
   
-  // Determine color based on health factor value in black and white theme
-  let color = 'bg-black'
-  
+  // Status text indicator
+  let statusText = 'Safe'
   if (hfValue === undefined) {
-    color = 'bg-gray-500'
+    statusText = 'Unknown'
   } else if (hfValue < 1.0) {
-    color = isDarkMode ? 'bg-white' : 'bg-black'
-  } else if (hfValue < 1.2) {
-    color = isDarkMode ? 'bg-gray-300' : 'bg-gray-700'
+    statusText = 'At Risk'
+  } else if (hfValue < 1.5) {
+    statusText = 'Moderate'
   }
-  
-  // Calculate width for the gauge - cap at 100%
-  const width = hfValue ? Math.min(hfValue / 2, 1) * 100 : 0
-  
+
   return (
     <div className={isDarkMode ? "bg-[#171720] rounded-lg p-4 shadow-md" : "bg-card/50 backdrop-blur-sm rounded-lg p-4 shadow-md hover-card"}>
       <div className="flex justify-between items-center mb-2">
@@ -40,9 +36,14 @@ export default function HealthFactorGauge({
           </svg>
           Health Factor
         </span>
-        <span className={isDarkMode ? "text-white font-bold" : "text-black font-bold"}>
-          {isLoading ? 'Loading...' : hfValue ? hfValue.toFixed(2) : 'N/A'}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-0.5 rounded bg-opacity-20 bg-gray-500 font-mono">
+            {statusText}
+          </span>
+          <span className={isDarkMode ? "text-white font-bold" : "text-black font-bold"}>
+            {isLoading ? 'Loading...' : hfValue ? hfValue.toFixed(2) : 'N/A'}
+          </span>
+        </div>
       </div>
       
       <div className={isDarkMode ? "w-full bg-[#0f0f13] rounded-full h-2.5" : "w-full bg-secondary/30 rounded-full h-2.5"}>
@@ -50,15 +51,15 @@ export default function HealthFactorGauge({
           <div className="animate-pulse bg-gray-500 h-2.5 rounded-full w-3/4"></div>
         ) : (
           <div 
-            className={`${color} h-2.5 rounded-full`} 
+            className={`${color} h-2.5 rounded-full transition-all duration-300`} 
             style={{ width: `${width}%` }}
           ></div>
         )}
       </div>
       
       <div className="flex justify-between text-xs mt-1">
-        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Liquidation</span>
-        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Safe</span>
+        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Liquidation (&lt; 1.0)</span>
+        <span className={isDarkMode ? "text-white" : "text-black font-bold"}>Safe (&gt; 2.0)</span>
       </div>
     </div>
   )
