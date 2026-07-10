@@ -36,6 +36,12 @@ A production-ready, over-collateralized, algorithmic stablecoin protocol designe
 | Liquidation Bonus | `10%` | Reward bonus for liquidators |
 | Oracle Heartbeat | `3600s` | Maximum allowable staleness window |
 
+### Oracle Staleness & Safety Guard
+```
+[Chainlink Feed] --> (Check updatedAt) --> (If > 3600s: Revert OracleStalenessLib__StalePrice)
+                                       --> (If valid: Calculate USD Value)
+```
+
 ## 🎨 Frontend Features
 
 This Next.js application provides:
