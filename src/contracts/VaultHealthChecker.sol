@@ -16,8 +16,10 @@ contract VaultHealthChecker {
     {
         if (totalDscMinted == 0) return (true, type(uint256).max);
         
-        uint256 collateralAdjustedForThreshold = (collateralValueInUsd * LIQUIDATION_THRESHOLD) / 100;
-        healthFactor = (collateralAdjustedForThreshold * 1e18) / totalDscMinted;
+        unchecked {
+            uint256 collateralAdjustedForThreshold = (collateralValueInUsd * LIQUIDATION_THRESHOLD) / 100;
+            healthFactor = (collateralAdjustedForThreshold * 1e18) / totalDscMinted;
+        }
         isHealthy = healthFactor >= MIN_HEALTH_FACTOR;
     }
 }
