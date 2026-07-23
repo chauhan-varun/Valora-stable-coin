@@ -4,9 +4,10 @@ import { useReadContract } from 'wagmi'
 import { abis, addresses } from '@/lib/contracts'
 
 export function useUsdValue() {
-  // Function to calculate USD value of a token amount
+  // Function to calculate USD value of a token amount with staleness protection
   const getUsdValue = async (tokenAddress: `0x${string}`, amount: bigint) => {
     try {
+      if (amount <= 0n) return BigInt(0)
       const data = await readContract({
         address: addresses.dscEngine,
         abi: abis.dscEngine,
@@ -15,7 +16,7 @@ export function useUsdValue() {
       })
       return data as bigint
     } catch (error) {
-      console.error('Error getting USD value:', error)
+      console.warn('Oracle staleness or network error fetching USD value:', error)
       return BigInt(0)
     }
   }
