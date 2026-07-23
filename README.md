@@ -28,6 +28,28 @@ A production-ready, over-collateralized, algorithmic stablecoin protocol designe
 - 🛡️ **Security-first**: Comprehensive testing with 100% line coverage
 - 📈 **Liquidation incentives**: 10% bonus for liquidators maintaining system health
 
+### Core Protocol Parameters
+| Parameter | Value | Description |
+| --- | --- | --- |
+| Minimum Health Factor | `1.0` | Threshold below which position is liquidatable |
+| Liquidation Threshold | `50%` | Enforces 200% minimum collateralization |
+| Liquidation Bonus | `10%` | Reward bonus for liquidators |
+| Oracle Heartbeat | `3600s` | Maximum allowable staleness window |
+
+### Oracle Staleness & Safety Guard
+```
+[Chainlink Feed] --> (Check updatedAt) --> (If > 3600s: Revert OracleStalenessLib__StalePrice)
+                                       --> (If valid: Calculate USD Value)
+```
+
+### Deployed Contracts (Sepolia Testnet)
+| Contract | Address |
+| --- | --- |
+| DSCEngine | `0xdd13E55209Fd76AfE204dBda4007C227904f0a81` |
+| DecentralizedStableCoin | `0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063` |
+| WETH Aggregator | `0x694AA1769357215DE4FAC081bf1f309aDC325306` |
+| WBTC Aggregator | `0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43` |
+
 ## 🎨 Frontend Features
 
 This Next.js application provides:

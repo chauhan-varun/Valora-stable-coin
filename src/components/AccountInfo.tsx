@@ -28,6 +28,7 @@ interface AccountInfoProps {
 export default function AccountInfo({ userAddress }: AccountInfoProps) {
   const { address } = useAccount()
   const [displayUnit, setDisplayUnit] = useState<'wei' | 'usd'>('usd')
+  const [isHovered, setIsHovered] = useState(false)
   
   // Use the provided address or the connected wallet address
   const targetAddress = userAddress || address
