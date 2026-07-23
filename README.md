@@ -42,6 +42,11 @@ A production-ready, over-collateralized, algorithmic stablecoin protocol designe
                                        --> (If valid: Calculate USD Value)
 ```
 
+### Vault Invariant Verification
+- Collateral Value Threshold: 50%
+- Minimum Health Factor: 1.0 (1e18)
+- Invariant equation: `(Collateral USD * 0.5) >= DSC Minted`
+
 ## 🎨 Frontend Features
 
 This Next.js application provides:
