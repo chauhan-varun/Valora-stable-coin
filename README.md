@@ -42,10 +42,13 @@ A production-ready, over-collateralized, algorithmic stablecoin protocol designe
                                        --> (If valid: Calculate USD Value)
 ```
 
-### Vault Invariant Verification
-- Collateral Value Threshold: 50%
-- Minimum Health Factor: 1.0 (1e18)
-- Invariant equation: `(Collateral USD * 0.5) >= DSC Minted`
+### Deployed Contracts (Sepolia Testnet)
+| Contract | Address |
+| --- | --- |
+| DSCEngine | `0xdd13E55209Fd76AfE204dBda4007C227904f0a81` |
+| DecentralizedStableCoin | `0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063` |
+| WETH Aggregator | `0x694AA1769357215DE4FAC081bf1f309aDC325306` |
+| WBTC Aggregator | `0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43` |
 
 ## 🎨 Frontend Features
 
